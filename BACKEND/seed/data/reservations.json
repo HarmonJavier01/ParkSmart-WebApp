@@ -1,0 +1,124 @@
+[
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a0",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0e1",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d0",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f2",
+    "startTime": "2025-04-24T08:00:00Z",
+    "endTime": "2025-04-24T10:00:00Z",
+    "duration": 2,
+    "fee": 40,
+    "status": "occupied",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a1",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0e5",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d0",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f3",
+    "startTime": "2025-04-24T09:00:00Z",
+    "endTime": "2025-04-24T11:00:00Z",
+    "duration": 2,
+    "fee": 40,
+    "status": "confirmed",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a2",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0f3",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d1",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f2",
+    "startTime": "2025-04-23T14:00:00Z",
+    "endTime": "2025-04-23T16:00:00Z",
+    "duration": 2,
+    "fee": 30,
+    "status": "completed",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a3",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0f8",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d1",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f3",
+    "startTime": "2025-04-24T10:00:00Z",
+    "endTime": "2025-04-24T12:00:00Z",
+    "duration": 2,
+    "fee": 30,
+    "status": "confirmed",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a4",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0e8",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d0",
+    "userId": null,
+    "guestInfo": { "name": "Guest User", "email": "guest@example.com", "phone": "09179998888" },
+    "startTime": "2025-04-24T11:00:00Z",
+    "endTime": "2025-04-24T13:00:00Z",
+    "duration": 2,
+    "fee": 40,
+    "status": "confirmed",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a5",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0e2",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d0",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f2",
+    "startTime": "2025-04-22T09:00:00Z",
+    "endTime": "2025-04-22T10:00:00Z",
+    "duration": 1,
+    "fee": 20,
+    "status": "cancelled",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a6",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0f5",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d1",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f3",
+    "startTime": "2025-04-21T07:00:00Z",
+    "endTime": "2025-04-21T09:00:00Z",
+    "duration": 2,
+    "fee": 30,
+    "status": "completed",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a7",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0e4",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d0",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f4",
+    "startTime": "2025-04-20T15:00:00Z",
+    "endTime": "2025-04-20T17:00:00Z",
+    "duration": 2,
+    "fee": 40,
+    "status": "expired",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a8",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0f9",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d1",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f2",
+    "startTime": "2025-04-24T13:00:00Z",
+    "endTime": "2025-04-24T15:00:00Z",
+    "duration": 2,
+    "fee": 30,
+    "status": "confirmed",
+    "qrCode": ""
+  },
+  {
+    "_id": "6648d4e5f6a7b8c9d0e1f2a9",
+    "slotId": "6648b2c3d4e5f6a7b8c9d0e0",
+    "lotId": "6648a1b2c3d4e5f6a7b8c9d0",
+    "userId": "6648c3d4e5f6a7b8c9d0e1f3",
+    "startTime": "2025-04-24T16:00:00Z",
+    "endTime": "2025-04-24T18:00:00Z",
+    "duration": 2,
+    "fee": 40,
+    "status": "confirmed",
+    "qrCode": ""
+  }
+]
+

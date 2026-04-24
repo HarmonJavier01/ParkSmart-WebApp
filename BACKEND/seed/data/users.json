@@ -1,0 +1,48 @@
+[
+  {
+    "_id": "6648c3d4e5f6a7b8c9d0e1f0",
+    "name": "Super Admin",
+    "email": "admin@parksmart.ph",
+    "phone": "09171234567",
+    "password": "admin123",
+    "role": "superadmin",
+    "isActive": true
+  },
+  {
+    "_id": "6648c3d4e5f6a7b8c9d0e1f1",
+    "name": "Lot Operator One",
+    "email": "operator@parksmart.ph",
+    "phone": "09171234568",
+    "password": "operator123",
+    "role": "lot_operator",
+    "isActive": true
+  },
+  {
+    "_id": "6648c3d4e5f6a7b8c9d0e1f2",
+    "name": "Juan Dela Cruz",
+    "email": "juan@example.com",
+    "phone": "09171234569",
+    "password": "password123",
+    "role": "user",
+    "isActive": true
+  },
+  {
+    "_id": "6648c3d4e5f6a7b8c9d0e1f3",
+    "name": "Maria Santos",
+    "email": "maria@example.com",
+    "phone": "09171234570",
+    "password": "password123",
+    "role": "user",
+    "isActive": true
+  },
+  {
+    "_id": "6648c3d4e5f6a7b8c9d0e1f4",
+    "name": "Pedro Reyes",
+    "email": "pedro@example.com",
+    "phone": "09171234571",
+    "password": "password123",
+    "role": "user",
+    "isActive": false
+  }
+]
+

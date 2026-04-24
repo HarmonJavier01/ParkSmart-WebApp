@@ -1,0 +1,27 @@
+[
+  {
+    "_id": "6648a1b2c3d4e5f6a7b8c9d0",
+    "name": "Manaoag Church Lot",
+    "address": "Rizal Street, Manaoag, Pangasinan",
+    "lat": 15.9766,
+    "lng": 120.4869,
+    "totalSlots": 10,
+    "ratePerHour": 20,
+    "operatingHours": { "open": "05:00", "close": "21:00" },
+    "isActive": true,
+    "imageUrl": ""
+  },
+  {
+    "_id": "6648a1b2c3d4e5f6a7b8c9d1",
+    "name": "Manaoag Public Market Lot",
+    "address": "Market Road, Manaoag, Pangasinan",
+    "lat": 15.978,
+    "lng": 120.4885,
+    "totalSlots": 10,
+    "ratePerHour": 15,
+    "operatingHours": { "open": "06:00", "close": "19:00" },
+    "isActive": true,
+    "imageUrl": ""
+  }
+]
+
