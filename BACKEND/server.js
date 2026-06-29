@@ -6,6 +6,16 @@ import { validateEnv } from './config/env.js';
 import connectDB from './config/db.js';
 import { registerSocketEvents } from './sockets/index.js';
 
+// BEFORE (CommonJS)
+const cors = require('cors');
+const express = require('express');
+const mongoose = require('mongoose');
+
+// AFTER (ES Module)
+import cors from 'cors';
+import express from 'express';
+import mongoose from 'mongoose';
+
 validateEnv();
 
 const PORT = process.env.PORT || 5000;
