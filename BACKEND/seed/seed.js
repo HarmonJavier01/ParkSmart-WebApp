@@ -8,6 +8,7 @@ import User from '../models/User.js';
 import ParkingLot from '../models/ParkingLot.js';
 import Slot from '../models/Slot.js';
 import Reservation from '../models/Reservation.js';
+import Review from '../models/Review.js';
 
 dotenv.config();
 
@@ -28,14 +29,16 @@ const seedDatabase = async () => {
     await ParkingLot.deleteMany();
     await Slot.deleteMany();
     await Reservation.deleteMany();
+    await Review.deleteMany();
     console.log('Cleared existing data');
 
     const usersData = await loadJSON('users.json');
     const lotsData = await loadJSON('lots.json');
     const slotsData = await loadJSON('slots.json');
     const reservationsData = await loadJSON('reservations.json');
+    const reviewsData = await loadJSON('reviews.json');
 
-    await User.insertMany(usersData);
+    await User.create(usersData);
     console.log(`Seeded ${usersData.length} users`);
 
     await ParkingLot.insertMany(lotsData);
@@ -46,6 +49,9 @@ const seedDatabase = async () => {
 
     await Reservation.insertMany(reservationsData);
     console.log(`Seeded ${reservationsData.length} reservations`);
+
+    await Review.insertMany(reviewsData);
+    console.log(`Seeded ${reviewsData.length} reviews`);
 
     console.log('✅ Database seeded successfully');
     process.exit(0);

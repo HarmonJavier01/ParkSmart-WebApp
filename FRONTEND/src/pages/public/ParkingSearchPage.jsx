@@ -1,15 +1,47 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import ParkingMap from '../../components/parking/ParkingMap.jsx';
 import LotCard from '../../components/parking/LotCard.jsx';
 import useParkingLots from '../../hooks/useParkingLots.js';
 import LoadingSpinner from '../../components/common/LoadingSpinner.jsx';
+import useAuth from '../../hooks/useAuth.js';
 
-const ParkingSearchPage = () => {
+const ParkingSearchPage = ({ isTab = false }) => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isTab && isAuthenticated) {
+      navigate('/account?tab=parking', { replace: true });
+    }
+  }, [isTab, isAuthenticated, navigate]);
+
   const { lots, loading } = useParkingLots();
   const [searchQuery, setSearchQuery] = useState('');
   const [availableOnly, setAvailableOnly] = useState(false);
   const [sortBy, setSortBy] = useState('distance');
+  const [hoveredLotId, setHoveredLotId] = useState(null);
+
+  const [mapCenter, setMapCenter] = useState({ lat: 15.9766, lng: 120.4869 });
+  const [searchedPlace, setSearchedPlace] = useState(null);
+
+  // Update map center when a specific lot is searched and found
+  useMemo(() => {
+    if (searchQuery) {
+      const firstMatch = lots.find(lot => 
+        lot.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lot.address.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      if (firstMatch) {
+        const location = { lat: firstMatch.lat, lng: firstMatch.lng };
+        setMapCenter(location);
+        setSearchedPlace(location);
+      }
+    } else {
+      setSearchedPlace(null);
+    }
+  }, [searchQuery, lots]);
 
   const filteredLots = useMemo(() => {
     let result = [...lots];
@@ -35,14 +67,14 @@ const ParkingSearchPage = () => {
   if (loading) return <LoadingSpinner fullScreen />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold mb-6">Find Parking</h1>
+    <div className={isTab ? "w-full" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>
+      {!isTab && <h1 className="text-2xl font-bold mb-6">Find Parking</h1>}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
         {/* Sidebar */}
         <div className="lg:col-span-1 flex flex-col gap-4 h-full overflow-hidden">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
             <input
               type="text"
               placeholder="Search lots..."
@@ -74,7 +106,12 @@ const ParkingSearchPage = () => {
 
           <div className="flex-1 overflow-y-auto space-y-4 pr-1">
             {filteredLots.map((lot) => (
-              <LotCard key={lot._id} lot={lot} />
+              <LotCard 
+                key={lot._id} 
+                lot={lot} 
+                onMouseEnter={() => setHoveredLotId(lot._id)}
+                onMouseLeave={() => setHoveredLotId(null)}
+              />
             ))}
             {filteredLots.length === 0 && (
               <p className="text-center text-gray-400 py-8">No lots found</p>
@@ -84,7 +121,12 @@ const ParkingSearchPage = () => {
 
         {/* Map */}
         <div className="lg:col-span-2 h-full rounded-xl overflow-hidden border border-gray-200">
-          <ParkingMap lots={filteredLots} />
+          <ParkingMap 
+            lots={filteredLots} 
+            center={mapCenter} 
+            searchedPlace={searchedPlace} 
+            hoveredLotId={hoveredLotId}
+          />
         </div>
       </div>
     </div>

@@ -54,15 +54,42 @@ export const createReservation = async (req, res, next) => {
       timestamp: new Date().toISOString()
     });
 
-    if (userId) {
-      const user = await User.findById(userId);
-      if (user && user.email) {
-        await sendEmail({
-          to: user.email,
+    // Send response immediately so the user isn't kept waiting
+    res.status(201).json({
+      message: 'Reservation created',
+      reservation: populatedReservation
+    });
+
+    // Fire-and-forget: send confirmation email in background (non-blocking)
+    try {
+      if (userId) {
+        const user = await User.findById(userId);
+        if (user && user.email) {
+          sendEmail({
+            to: user.email,
+            subject: 'ParkSmart - Reservation Confirmed',
+            html: `
+              <h2>Reservation Confirmed</h2>
+              <p>Hello ${user.name},</p>
+              <p>Your parking reservation has been confirmed.</p>
+              <ul>
+                <li><strong>Lot:</strong> ${lot.name}</li>
+                <li><strong>Slot:</strong> ${slot.slotNumber}</li>
+                <li><strong>Start:</strong> ${new Date(startTime).toLocaleString()}</li>
+                <li><strong>End:</strong> ${new Date(endTime).toLocaleString()}</li>
+                <li><strong>Fee:</strong> ₱${fee}</li>
+              </ul>
+              <p>Show your QR code at the entrance.</p>
+            `
+          }).catch(err => console.warn('⚠️ Reservation email failed:', err.message));
+        }
+      } else if (guestInfo && guestInfo.email) {
+        sendEmail({
+          to: guestInfo.email,
           subject: 'ParkSmart - Reservation Confirmed',
           html: `
             <h2>Reservation Confirmed</h2>
-            <p>Hello ${user.name},</p>
+            <p>Hello ${guestInfo.name},</p>
             <p>Your parking reservation has been confirmed.</p>
             <ul>
               <li><strong>Lot:</strong> ${lot.name}</li>
@@ -73,32 +100,11 @@ export const createReservation = async (req, res, next) => {
             </ul>
             <p>Show your QR code at the entrance.</p>
           `
-        });
+        }).catch(err => console.warn('⚠️ Reservation email failed:', err.message));
       }
-    } else if (guestInfo && guestInfo.email) {
-      await sendEmail({
-        to: guestInfo.email,
-        subject: 'ParkSmart - Reservation Confirmed',
-        html: `
-          <h2>Reservation Confirmed</h2>
-          <p>Hello ${guestInfo.name},</p>
-          <p>Your parking reservation has been confirmed.</p>
-          <ul>
-            <li><strong>Lot:</strong> ${lot.name}</li>
-            <li><strong>Slot:</strong> ${slot.slotNumber}</li>
-            <li><strong>Start:</strong> ${new Date(startTime).toLocaleString()}</li>
-            <li><strong>End:</strong> ${new Date(endTime).toLocaleString()}</li>
-            <li><strong>Fee:</strong> ₱${fee}</li>
-          </ul>
-          <p>Show your QR code at the entrance.</p>
-        `
-      });
+    } catch (emailErr) {
+      console.warn('⚠️ Email sending error (non-blocking):', emailErr.message);
     }
-
-    res.status(201).json({
-      message: 'Reservation created',
-      reservation: populatedReservation
-    });
   } catch (error) {
     next(error);
   }

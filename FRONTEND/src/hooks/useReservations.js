@@ -7,14 +7,15 @@ export const useReservations = (userId = null) => {
   const [error, setError] = useState(null);
 
   const fetchReservations = useCallback(async () => {
+    if (!userId) {
+      setReservations([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      let data;
-      if (userId) {
-        data = await reservationService.getUserReservations(userId);
-      } else {
-        data = await reservationService.getAllReservations();
-      }
+      const data = await reservationService.getUserReservations(userId);
       setReservations(data);
       setError(null);
     } catch (err) {

@@ -6,6 +6,9 @@ import LotDetailPage from './pages/public/LotDetailPage.jsx';
 import ReservationPage from './pages/public/ReservationPage.jsx';
 import TicketPage from './pages/public/TicketPage.jsx';
 import AccountPage from './pages/public/AccountPage.jsx';
+import VerifyEmailPage from './pages/public/VerifyEmailPage.jsx';
+import ForgotPasswordPage from './pages/public/ForgotPasswordPage.jsx';
+import ResetPasswordPage from './pages/public/ResetPasswordPage.jsx';
 
 import AdminLoginPage from './pages/admin/AdminLoginPage.jsx';
 import DashboardPage from './pages/admin/DashboardPage.jsx';
@@ -21,10 +24,12 @@ import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 import AdminRoute from './components/common/AdminRoute.jsx';
 import Navbar from './components/common/Navbar.jsx';
 import Footer from './components/common/Footer.jsx';
+import OnboardingTour from './components/common/OnboardingTour.jsx';
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col">
+      <OnboardingTour />
       <Routes>
         {/* Public Routes */}
         <Route
@@ -40,6 +45,9 @@ function App() {
                   <Route path="/reserve/:slotId" element={<ReservationPage />} />
                   <Route path="/ticket/:reservationId" element={<TicketPage />} />
                   <Route path="/account" element={<AccountPage />} />
+                  <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
+                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                  <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
                 </Routes>
               </main>
               <Footer />

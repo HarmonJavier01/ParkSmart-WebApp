@@ -5,7 +5,12 @@ export const ENDPOINTS = {
   AUTH: {
     REGISTER: `${API_BASE}/auth/register`,
     LOGIN: `${API_BASE}/auth/login`,
-    ADMIN_LOGIN: `${API_BASE}/auth/admin/login`
+    ADMIN_LOGIN: `${API_BASE}/auth/admin/login`,
+    FORGOT_PASSWORD: `${API_BASE}/auth/forgot-password`,
+    VERIFY_OTP: `${API_BASE}/auth/verify-otp`,
+    RESEND_OTP: `${API_BASE}/auth/resend-otp`,
+    RESET_PASSWORD: `${API_BASE}/auth/reset-password`,
+    VERIFY_EMAIL: (token) => `${API_BASE}/auth/verify-email/${token}`
   },
   LOTS: {
     BASE: `${API_BASE}/lots`,
@@ -32,6 +37,15 @@ export const ENDPOINTS = {
     HOURLY_HEATMAP: `${API_BASE}/reports/hourly-heatmap`,
     REVENUE: `${API_BASE}/reports/revenue`,
     SENSOR_LOGS: `${API_BASE}/reports/sensor-logs`
+  },
+  ESP32: {
+    STATUS: `${API_BASE}/esp32/status`,
+    FETCH: `${API_BASE}/esp32/fetch`,
+    HISTORY: `${API_BASE}/esp32/history`
+  },
+  REVIEWS: {
+    BY_LOT: (lotId) => `${API_BASE}/reviews/${lotId}`,
+    CREATE: (lotId) => `${API_BASE}/reviews/${lotId}`
   }
 };
 

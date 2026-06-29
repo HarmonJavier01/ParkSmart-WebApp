@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { WHEELCHAIR, BIKE, ZAP } from 'lucide-react';
+import { Accessibility, Bike, Zap } from 'lucide-react';
 
 const typeIcons = {
-  PWD: WHEELCHAIR,
-  motorcycle: BIKE,
-  ev: ZAP
+  PWD: Accessibility,
+  motorcycle: Bike,
+  ev: Zap
 };
 
 const SlotCell = ({ slot, onClick, showTooltip = true }) => {

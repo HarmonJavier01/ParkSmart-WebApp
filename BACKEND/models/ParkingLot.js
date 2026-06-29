@@ -41,6 +41,20 @@ const parkingLotSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
     default: ''
+  },
+  images: {
+    type: [String],
+    default: []
+  },
+  rating: {
+    type: Number,
+    default: 5.0,
+    min: [0, 'Rating cannot be negative'],
+    max: [5, 'Rating cannot exceed 5']
+  },
+  ratingCount: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true

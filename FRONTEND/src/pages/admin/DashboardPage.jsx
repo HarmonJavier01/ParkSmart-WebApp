@@ -5,6 +5,7 @@ import OccupancyChart from '../../components/dashboard/OccupancyChart.jsx';
 import StatusDonut from '../../components/dashboard/StatusDonut.jsx';
 import LiveFeed from '../../components/dashboard/LiveFeed.jsx';
 import SensorHealthRow from '../../components/dashboard/SensorHealthRow.jsx';
+import ESP32StatusPanel from '../../components/dashboard/ESP32StatusPanel.jsx';
 import reportService from '../../services/reportService.js';
 import reservationService from '../../services/reservationService.js';
 import lotService from '../../services/lotService.js';
@@ -88,6 +89,9 @@ const DashboardPage = () => {
         <LiveFeed reservations={reservations} />
         <SensorHealthRow sensors={sensorLogs} />
       </div>
+
+      {/* ESP32 Live Data */}
+      <ESP32StatusPanel />
     </div>
   );
 };

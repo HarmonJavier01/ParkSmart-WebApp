@@ -9,6 +9,8 @@ import slotRoutes from './routes/slotRoutes.js';
 import reservationRoutes from './routes/reservationRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import esp32Routes from './routes/esp32Routes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
 
 import errorHandler from './middleware/errorHandler.js';
 
@@ -16,13 +18,25 @@ const app = express();
 
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    const allowed = [
+      process.env.CLIENT_URL || 'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5175'
+    ];
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 1000,
   message: { message: 'Too many requests, please try again later.' }
 });
 app.use(limiter);
@@ -36,6 +50,8 @@ app.use('/api/slots', slotRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/esp32', esp32Routes);
+app.use('/api/reviews', reviewRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });

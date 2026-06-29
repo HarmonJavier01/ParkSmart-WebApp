@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@react-google-maps/api": "^2.20.8",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "date-fns": "^3.6.0",
@@ -21,7 +23,8 @@
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.23.1",
     "recharts": "^2.12.7",
-    "socket.io-client": "^4.7.5"
+    "socket.io-client": "^4.7.5",
+    "use-places-autocomplete": "^4.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
@@ -33,4 +36,3 @@
     "vite": "^5.3.1"
   }
 }
-

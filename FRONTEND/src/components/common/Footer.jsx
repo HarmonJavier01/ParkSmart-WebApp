@@ -12,7 +12,7 @@ const Footer = () => {
           <h3 className="text-white font-bold text-lg mb-4">Contact</h3>
           <div className="space-y-2 text-sm">
             <p className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Manaoag, Pangasinan, Philippines</p>
-            <p className="flex items-center gap-2"><Phone className="w-4 h-4" /> (075) 123-4567</p>
+            <p className="flex items-center gap-2"><Phone className="w-4 h-4" /> (+63) 912-345-7890</p>
             <p className="flex items-center gap-2"><Mail className="w-4 h-4" /> info@parksmart.ph</p>
           </div>
         </div>

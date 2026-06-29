@@ -4,6 +4,7 @@ import slotService from '../../services/slotService.js';
 import SlotGrid from '../../components/parking/SlotGrid.jsx';
 import { useSocketEvent } from '../../hooks/useSocket.js';
 import LoadingSpinner from '../../components/common/LoadingSpinner.jsx';
+import ESP32StatusPanel from '../../components/dashboard/ESP32StatusPanel.jsx';
 
 const MonitorPage = () => {
   const [lots, setLots] = useState([]);
@@ -49,6 +50,9 @@ const MonitorPage = () => {
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-bold">Real-Time Monitor</h1>
+
+      {/* ESP32 Live Sensor Data */}
+      <ESP32StatusPanel />
 
       {lots.map((lot) => (
         <div key={lot._id} className="card">
