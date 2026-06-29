@@ -22,7 +22,9 @@ app.use(cors({
     const allowed = [
       process.env.CLIENT_URL || 'http://localhost:5173',
       'http://localhost:5174',
-      'http://localhost:5175'
+      'http://localhost:5175',
+      'https://park-smart-web-app-7rx8.vercel.app'
+
     ];
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin || allowed.includes(origin)) {
