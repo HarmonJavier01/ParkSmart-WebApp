@@ -27,3 +27,7 @@ process.on('unhandledRejection', (err) => {
   server.close(() => process.exit(1));
 });
 
+const cors = require('cors');
+app.use(cors({
+  origin: 'https://park-smart-web-app-7rx8.vercel.app'
+}));
