@@ -10,7 +10,8 @@ export const ENDPOINTS = {
     VERIFY_OTP: `${API_BASE}/auth/verify-otp`,
     RESEND_OTP: `${API_BASE}/auth/resend-otp`,
     RESET_PASSWORD: `${API_BASE}/auth/reset-password`,
-    VERIFY_EMAIL: (token) => `${API_BASE}/auth/verify-email/${token}`
+    VERIFY_EMAIL: (token) => `${API_BASE}/auth/verify-email/${token}`,
+    GOOGLE_LOGIN: `${API_BASE}/auth/google-login`
   },
   LOTS: {
     BASE: `${API_BASE}/lots`,

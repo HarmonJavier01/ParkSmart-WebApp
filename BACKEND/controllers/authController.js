@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 import User from '../models/User.js';
 import { sendOTPEmail, sendVerificationLinkEmail } from '../utils/mailer.js';
 
@@ -273,5 +274,71 @@ export const verifyEmailLink = async (req, res, next) => {
 
   } catch (err) {
     next(err);
+  }
+};
+
+// ─── GOOGLE LOGIN ────────────────────────────────────────
+export const googleLogin = async (req, res, next) => {
+  try {
+    const { accessToken } = req.body;
+
+    if (!accessToken) {
+      return res.status(400).json({ message: 'Access token is required' });
+    }
+
+    // Verify token with Google API
+    const googleResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+
+    const { email, name } = googleResponse.data;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Google account does not provide an email address' });
+    }
+
+    // Find or create user
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // If user exists but is not verified, verify them since they authenticated with Google
+      if (!user.isVerified) {
+        user.isVerified = true;
+        await user.save();
+      }
+    } else {
+      // Create new user (password and phone optional now)
+      user = await User.create({
+        name,
+        email,
+        isVerified: true,
+        role: 'user',
+        isActive: true
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({ message: 'Account is deactivated' });
+    }
+
+    // Generate JWT
+    const token = generateToken(user._id);
+
+    res.status(200).json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        role: user.role
+      }
+    });
+
+  } catch (err) {
+    console.error('Google login error:', err.response?.data || err.message);
+    res.status(401).json({ message: 'Invalid or expired Google access token' });
   }
 };

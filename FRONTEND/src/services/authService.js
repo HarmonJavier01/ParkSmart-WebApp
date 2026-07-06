@@ -40,6 +40,11 @@ const authService = {
   verifyEmail: async (token) => {
     const response = await axios.get(ENDPOINTS.AUTH.VERIFY_EMAIL(token));
     return response.data;
+  },
+
+  googleLogin: async (accessToken) => {
+    const response = await axios.post(ENDPOINTS.AUTH.GOOGLE_LOGIN, { accessToken });
+    return response.data;
   }
 };
 

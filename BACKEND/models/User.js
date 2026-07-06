@@ -16,11 +16,11 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    required: [true, 'Phone number is required']
+    required: false
   },
   password: { 
     type: String, 
-    required: [true, 'Password is required'],
+    required: false,
     select: false
   },
   role: {
@@ -55,6 +55,7 @@ const userSchema = new mongoose.Schema({
 // Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
+  if (!this.password) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });

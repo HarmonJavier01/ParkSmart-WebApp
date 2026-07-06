@@ -71,6 +71,25 @@ const AccountPage = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '896000000000-exampleid.apps.googleusercontent.com';
+    const redirectUri = `${window.location.origin}/google-callback`;
+    const scope = 'openid email profile';
+    const responseType = 'token';
+    const state = Math.random().toString(36).substring(2, 15);
+    
+    localStorage.setItem('oauth_state', state);
+
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` + 
+      `client_id=${encodeURIComponent(clientId)}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&response_type=${encodeURIComponent(responseType)}` +
+      `&scope=${encodeURIComponent(scope)}` +
+      `&state=${encodeURIComponent(state)}`;
+      
+    window.location.href = googleAuthUrl;
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -494,26 +513,16 @@ const AccountPage = () => {
               <div className="flex-grow border-t border-gray-100"></div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="w-full">
               <button 
                 type="button" 
-                onClick={() => alert('Google authentication demo')}
-                className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition text-sm font-semibold text-gray-700 bg-white shadow-sm"
+                onClick={handleGoogleLogin}
+                className="w-full flex items-center justify-center gap-3 py-3.5 px-4 border border-gray-200/80 rounded-xl hover:bg-gray-50 transition text-sm font-extrabold text-gray-700 bg-white shadow-xs"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.115-5.187 4.115-3.4 0-6.159-2.759-6.159-6.16s2.759-6.16 6.16-6.16c1.654 0 3.12.656 4.22 1.722l3.056-3.056C19.299 1.77 15.992 0 12.24 0c-6.62 0-12 5.38-12 12s5.38 12 12 12c5.56 0 10.22-3.82 11.45-9.01H12.24z"/>
                 </svg>
-                Google
-              </button>
-              <button 
-                type="button" 
-                onClick={() => alert('Apple ID authentication demo')}
-                className="flex items-center justify-center gap-2 py-3 px-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition text-sm font-semibold text-gray-700 bg-white shadow-sm"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.22.67-2.94 1.51-.62.71-1.16 1.85-1.01 2.96 1.12.09 2.27-.6 2.96-1.41z"/>
-                </svg>
-                Apple
+                Continue with Google
               </button>
             </div>
           </div>

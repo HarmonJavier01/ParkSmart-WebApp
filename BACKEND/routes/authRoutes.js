@@ -7,7 +7,8 @@ import {
   adminLogin, 
   forgotPassword, 
   resetPassword,
-  verifyEmailLink
+  verifyEmailLink,
+  googleLogin
 } from '../controllers/authController.js';
 import { authLimiter } from '../middleware/rateLimiter.js';
 
@@ -21,6 +22,7 @@ router.post('/admin/login', authLimiter, adminLogin);
 router.post('/forgot-password', authLimiter, forgotPassword);
 router.post('/reset-password', authLimiter, resetPassword);
 router.get('/verify-email/:token', authLimiter, verifyEmailLink);
+router.post('/google-login', authLimiter, googleLogin);
 
 export default router;
 

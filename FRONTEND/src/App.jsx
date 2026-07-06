@@ -6,6 +6,7 @@ import LotDetailPage from './pages/public/LotDetailPage.jsx';
 import ReservationPage from './pages/public/ReservationPage.jsx';
 import TicketPage from './pages/public/TicketPage.jsx';
 import AccountPage from './pages/public/AccountPage.jsx';
+import GoogleCallback from './pages/public/GoogleCallback.jsx';
 import VerifyEmailPage from './pages/public/VerifyEmailPage.jsx';
 import ForgotPasswordPage from './pages/public/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/public/ResetPasswordPage.jsx';
@@ -45,6 +46,7 @@ function App() {
                   <Route path="/reserve/:slotId" element={<ReservationPage />} />
                   <Route path="/ticket/:reservationId" element={<TicketPage />} />
                   <Route path="/account" element={<AccountPage />} />
+                  <Route path="/google-callback" element={<GoogleCallback />} />
                   <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
                   <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                   <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
