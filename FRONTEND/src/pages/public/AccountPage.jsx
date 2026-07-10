@@ -7,7 +7,6 @@ import {
   Save, 
   KeyRound, 
   ArrowLeft, 
-  ArrowRight,
   Car, 
   CalendarCheck, 
   MapPin, 
@@ -372,316 +371,202 @@ const AccountPage = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex bg-white font-outfit overflow-hidden">
-      {/* Left Panel: Forms */}
-      <div className="w-full md:w-[45%] lg:w-[40%] p-8 md:p-12 xl:p-16 flex flex-col justify-between min-h-screen bg-white">
+    <div className="min-h-[85vh] relative overflow-hidden flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-outfit">
+      {/* Aesthetic Floating Blur Blobs */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-teal-500/10 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[350px] h-[350px] rounded-full bg-emerald-500/10 blur-[100px] pointer-events-none" />
+
+      <div className="relative w-full max-w-md bg-white/80 backdrop-blur-xl border border-gray-100/50 shadow-2xl rounded-2xl p-8 z-10 animate-fade-in">
         
-        {/* Logo Header */}
-        <div className="flex items-center">
-          <div className="w-10 h-10 bg-[#063b31] rounded-xl flex items-center justify-center text-white">
-            <Car className="w-5 h-5 text-teal-300" />
+        {/* Splendid Branding Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex w-14 h-14 bg-gradient-to-tr from-parking-primary to-parking-secondary rounded-2xl items-center justify-center shadow-lg shadow-parking-primary/20 mb-4 animate-bounce">
+            <Car className="w-7 h-7 text-white" />
           </div>
-          <span className="ml-3 font-extrabold text-xl tracking-wider text-[#063b31]">PARKSMART</span>
+          <h2 className="text-3xl font-black text-gray-800 tracking-tight">ParkSmart</h2>
+          <p className="text-sm text-gray-500 mt-1">Smart IoT Parking Platform</p>
         </div>
 
-        {/* Form Container */}
-        <div className="my-auto py-8">
-          <h2 className="text-3xl font-black text-gray-900 mb-6">
-            {verificationMode 
-              ? 'Verify Account' 
-              : activeTab === 'register' 
-                ? 'Sign Up' 
-                : 'Sign In'}
-          </h2>
+        {!verificationMode && (
+          /* Premium Sliding Pill Tab Selector */
+          <div className="bg-gray-100/80 p-1.5 rounded-2xl flex mb-8 relative">
+            <div 
+              className={`absolute top-1.5 bottom-1.5 rounded-xl bg-white shadow-md transition-all duration-300 ease-out ${
+                activeTab === 'login' 
+                  ? 'left-1.5 w-[calc(50%-3px)]' 
+                  : 'left-[calc(50%+1.5px)] w-[calc(50%-3px)]'
+              }`}
+            />
+            <button
+              type="button"
+              onClick={() => setActiveTab('login')}
+              className={`flex-grow py-3 text-sm font-bold text-center z-10 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 ${
+                activeTab === 'login' ? 'text-parking-primary scale-100' : 'text-gray-400 hover:text-gray-600 scale-95'
+              }`}
+            >
+              <LogIn className="w-4 h-4" /> Login
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('register')}
+              className={`flex-grow py-3 text-sm font-bold text-center z-10 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 ${
+                activeTab === 'register' ? 'text-parking-primary scale-100' : 'text-gray-400 hover:text-gray-600 scale-95'
+              }`}
+            >
+              <UserPlus className="w-4 h-4" /> Register
+            </button>
+          </div>
+        )}
 
-          {/* Tab Selector */}
-          {!verificationMode && (
-            <div className="flex items-center gap-6 border-b border-gray-100 pb-3 mb-8 text-xs font-bold tracking-wider">
-              <button
-                type="button"
-                onClick={() => setActiveTab('login')}
-                className={`transition-colors uppercase pb-2 relative ${
-                  activeTab === 'login' 
-                    ? 'text-gray-900 border-b-2 border-[#063b31]' 
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                Username
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('register')}
-                className={`transition-colors uppercase pb-2 relative ${
-                  activeTab === 'register' 
-                    ? 'text-gray-900 border-b-2 border-[#063b31]' 
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                Register
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('admin')}
-                className={`transition-colors uppercase pb-2 relative ${
-                  activeTab === 'admin' 
-                    ? 'text-gray-900 border-b-2 border-[#063b31]' 
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                Admin Login
-              </button>
-            </div>
-          )}
-
-          {verificationMode ? (
-            /* OTP Verification Form */
-            <div className="space-y-6">
-              <p className="text-gray-500 text-sm leading-relaxed">
-                We've sent a 6-digit verification code to <span className="font-semibold text-gray-800">{registeredEmail}</span>
+        {verificationMode ? (
+          <div className="space-y-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-parking-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <KeyRound className="w-8 h-8 text-parking-primary animate-pulse" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Verify Your Account</h3>
+              <p className="text-gray-500 text-sm mt-2 leading-relaxed">
+                We've sent a 6-digit code to <span className="font-semibold text-gray-800">{registeredEmail}</span>
               </p>
-
-              <form onSubmit={handleVerifyOTP} className="space-y-6">
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                    6-Digit OTP
-                  </label>
-                  <input
-                    type="text"
-                    maxLength="6"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                    required
-                    placeholder="000000"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#063b31] focus:border-transparent transition text-center text-xl tracking-[0.5em] font-mono text-gray-700 bg-white"
-                  />
-                </div>
-                
-                <div className="flex justify-center">
-                  <button 
-                    type="submit" 
-                    disabled={submitting} 
-                    className="w-14 h-14 bg-[#063b31] hover:bg-[#042c25] active:scale-95 text-white rounded-2xl shadow-lg flex items-center justify-center transition-all cursor-pointer"
-                  >
-                    <ArrowRight className="w-6 h-6" />
-                  </button>
-                </div>
-              </form>
-
-              <div className="flex flex-col gap-3 pt-4 text-center">
-                <button 
-                  onClick={handleResendOTP}
-                  disabled={submitting}
-                  className="text-xs text-parking-primary font-bold hover:underline transition"
-                >
-                  Didn't get the code? Resend
-                </button>
-                <button 
-                  onClick={() => setVerificationMode(false)}
-                  className="text-xs text-gray-400 flex items-center justify-center gap-1.5 hover:text-gray-600 transition"
-                >
-                  <ArrowLeft className="w-4 h-4" /> Back to Registration
-                </button>
-              </div>
             </div>
-          ) : activeTab === 'login' || activeTab === 'admin' ? (
-            /* Login Form */
-            <div className="space-y-6">
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                    Username
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="Enter your username"
-                    value={loginData.email}
-                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                    required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#063b31] focus:border-transparent transition text-sm font-medium text-gray-700 bg-white"
-                  />
-                </div>
-                
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                      Password
-                    </label>
-                  </div>
-                  <input
-                    type="password"
-                    placeholder="••••••••"
-                    value={loginData.password}
-                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                    required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#063b31] focus:border-transparent transition text-sm font-medium text-gray-700 bg-white"
-                  />
-                </div>
 
-                <div className="flex items-center justify-between pt-1">
-                  {/* Google Login Icon Button */}
-                  <button 
-                    type="button" 
-                    onClick={handleGoogleLogin}
-                    className="w-12 h-12 flex items-center justify-center border border-gray-200 rounded-xl hover:bg-gray-50 transition bg-white"
-                    title="Sign in with Google"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
-                      <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.115-5.187 4.115-3.4 0-6.159-2.759-6.159-6.16s2.759-6.16 6.16-6.16c1.654 0 3.12.656 4.22 1.722l3.056-3.056C19.299 1.77 15.992 0 12.24 0c-6.62 0-12 5.38-12 12s5.38 12 12 12c5.56 0 10.22-3.82 11.45-9.01H12.24z"/>
-                    </svg>
-                  </button>
+            <form onSubmit={handleVerifyOTP} className="space-y-4">
+              <InputField
+                label="6-Digit OTP"
+                type="text"
+                maxLength="6"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                required
+                placeholder="000000"
+                className="text-center text-2xl tracking-[0.5em] font-mono"
+              />
+              
+              <button 
+                type="submit" 
+                disabled={submitting} 
+                className="w-full btn-primary py-3.5 rounded-xl shadow-lg shadow-parking-primary/20 hover:shadow-xl font-bold text-white transition-all transform active:scale-95"
+              >
+                {submitting ? 'Verifying...' : 'Verify & Login'}
+              </button>
+            </form>
 
-                  {/* Stay Signed In Checkbox */}
-                  <div className="flex items-center gap-2">
-                    <input 
-                      id="stay-signed-in" 
-                      type="checkbox" 
-                      className="w-4 h-4 text-[#063b31] border-gray-300 rounded focus:ring-[#063b31] accent-[#063b31]" 
-                    />
-                    <label htmlFor="stay-signed-in" className="text-[10px] font-bold text-gray-400 uppercase tracking-wider select-none cursor-pointer">
-                      Stay Signed In
-                    </label>
-                  </div>
-                </div>
-
-                <div className="flex justify-center pt-2">
-                  <button 
-                    type="submit" 
-                    disabled={submitting} 
-                    className="w-14 h-14 bg-[#063b31] hover:bg-[#042c25] active:scale-95 text-white rounded-2xl shadow-lg flex items-center justify-center transition-all cursor-pointer"
-                  >
-                    <ArrowRight className="w-6 h-6" />
-                  </button>
-                </div>
-              </form>
+            <div className="flex flex-col gap-3 pt-2">
+              <button 
+                onClick={handleResendOTP}
+                disabled={submitting}
+                className="text-sm text-parking-primary font-bold hover:underline text-center transition"
+              >
+                Didn't get the code? Resend
+              </button>
+              <button 
+                onClick={() => setVerificationMode(false)}
+                className="text-sm text-gray-400 flex items-center justify-center gap-2 hover:text-gray-600 transition"
+              >
+                <ArrowLeft className="w-4 h-4" /> Back to Registration
+              </button>
             </div>
-          ) : (
-            /* Register Form */
-            <form onSubmit={handleRegister} className="space-y-4">
+          </div>
+        ) : activeTab === 'login' ? (
+          <div className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-5">
+              <InputField
+                label="Email Address"
+                type="email"
+                placeholder="you@example.com"
+                value={loginData.email}
+                onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                required
+              />
               <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  value={registerData.name}
-                  onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#063b31] focus:border-transparent transition text-sm font-medium text-gray-700 bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder="john@example.com"
-                  value={registerData.email}
-                  onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#063b31] focus:border-transparent transition text-sm font-medium text-gray-700 bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  placeholder="09171234567"
-                  value={registerData.phone}
-                  onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#063b31] focus:border-transparent transition text-sm font-medium text-gray-700 bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-                  Password
-                </label>
-                <input
+                <InputField
+                  label="Password"
                   type="password"
                   placeholder="••••••••"
-                  value={registerData.password}
-                  onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                  value={loginData.password}
+                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#063b31] focus:border-transparent transition text-sm font-medium text-gray-700 bg-white"
                 />
+                <div className="flex justify-end mt-2">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-xs font-semibold text-parking-primary hover:underline transition"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
               </div>
-
-              <div className="flex justify-center pt-2">
-                <button 
-                  type="submit" 
-                  disabled={submitting} 
-                  className="w-14 h-14 bg-[#063b31] hover:bg-[#042c25] active:scale-95 text-white rounded-2xl shadow-lg flex items-center justify-center transition-all cursor-pointer"
-                >
-                  <ArrowRight className="w-6 h-6" />
-                </button>
-              </div>
+              
+              <button 
+                type="submit" 
+                disabled={submitting} 
+                className="w-full py-3.5 bg-gradient-to-r from-parking-primary to-parking-secondary hover:brightness-110 active:scale-95 text-white font-bold rounded-xl shadow-lg shadow-parking-primary/10 hover:shadow-xl transition-all flex items-center justify-center gap-2"
+              >
+                {submitting ? 'Signing in...' : 'Sign In'}
+              </button>
             </form>
-          )}
-        </div>
 
-        {/* Footer / Protection */}
-        <div className="text-center space-y-4">
-          {!verificationMode && activeTab !== 'register' && (
-            <Link 
-              to="/forgot-password" 
-              className="text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-wider transition"
-            >
-              Forgot Password?
-            </Link>
-          )}
-          <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">
-            v98.0.3
-          </p>
-          
-          <div className="text-[9px] font-bold text-gray-400 uppercase tracking-wider leading-relaxed max-w-xs mx-auto">
-            This site is protected by hCaptcha and its{" "}
-            <a href="#" className="underline hover:text-gray-600">Privacy Policy</a> and{" "}
-            <a href="#" className="underline hover:text-gray-600">Terms of Service</a> apply.
-          </div>
-        </div>
-      </div>
+            {/* Social Logins Splitter */}
+            <div className="relative flex py-2 items-center">
+              <div className="flex-grow border-t border-gray-100"></div>
+              <span className="flex-shrink mx-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">or continue with</span>
+              <div className="flex-grow border-t border-gray-100"></div>
+            </div>
 
-      {/* Right Panel: Split Screen Background Image & Branding */}
-      <div 
-        className="hidden md:flex md:w-[55%] lg:w-[60%] relative bg-cover bg-center h-screen items-center justify-center"
-        style={{ 
-          backgroundImage: "linear-gradient(rgba(5, 54, 48, 0.45), rgba(5, 54, 48, 0.55)), url('/images/backgroundImage.jpg')" 
-        }}
-      >
-        {/* Top Right User Icon Button */}
-        <button className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white backdrop-blur-md hover:bg-white/20 transition cursor-pointer">
-          <User className="w-5 h-5" />
-        </button>
-
-        {/* Center Logo branding inside circles */}
-        <div className="flex flex-col items-center gap-6 text-center select-none z-10">
-          <div className="w-56 h-56 rounded-full border-2 border-dashed border-teal-300/20 flex items-center justify-center">
-            <div className="w-40 h-40 rounded-full border border-white/10 bg-white/5 backdrop-blur-xs flex items-center justify-center shadow-2xl">
-              {/* Slanted smart parking icon */}
-              <svg className="w-16 h-16 text-teal-300/80 transform -rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
-              </svg>
+            <div className="w-full">
+              <button 
+                type="button" 
+                onClick={handleGoogleLogin}
+                className="w-full flex items-center justify-center gap-3 py-3.5 px-4 border border-gray-200/80 rounded-xl hover:bg-gray-50 transition text-sm font-extrabold text-gray-700 bg-white shadow-xs"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.115-5.187 4.115-3.4 0-6.159-2.759-6.159-6.16s2.759-6.16 6.16-6.16c1.654 0 3.12.656 4.22 1.722l3.056-3.056C19.299 1.77 15.992 0 12.24 0c-6.62 0-12 5.38-12 12s5.38 12 12 12c5.56 0 10.22-3.82 11.45-9.01H12.24z"/>
+                </svg>
+                Continue with Google
+              </button>
             </div>
           </div>
-          <p className="text-[10px] font-black tracking-[0.3em] text-white/95 uppercase mt-2">
-            Transforming Urban Mobility
-          </p>
-        </div>
-
-        {/* Bottom Right Video Icon Button */}
-        <button className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-black/30 border border-white/10 flex items-center justify-center text-white backdrop-blur-md hover:bg-black/40 transition cursor-pointer">
-          {/* Custom video camera icon */}
-          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-        </button>
+        ) : (
+          <form onSubmit={handleRegister} className="space-y-4">
+            <InputField
+              label="Full Name"
+              placeholder="John Doe"
+              value={registerData.name}
+              onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+              required
+            />
+            <InputField
+              label="Email Address"
+              type="email"
+              placeholder="john@example.com"
+              value={registerData.email}
+              onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+              required
+            />
+            <InputField
+              label="Phone Number"
+              placeholder="09171234567"
+              value={registerData.phone}
+              onChange={(e) => setRegisterData({ ...registerData, phone: e.target.value })}
+              required
+            />
+            <InputField
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              value={registerData.password}
+              onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+              required
+            />
+            <button 
+              type="submit" 
+              disabled={submitting} 
+              className="w-full py-3.5 bg-gradient-to-r from-parking-primary to-parking-secondary hover:brightness-110 active:scale-95 text-white font-bold rounded-xl shadow-lg shadow-parking-primary/10 hover:shadow-xl transition-all flex items-center justify-center gap-2 mt-6"
+            >
+              {submitting ? 'Creating account...' : 'Create Account'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
