@@ -1,25 +1,42 @@
-# ParkSmart Web
+# 🚗 ParkSmart Web
 
-IoT-based smart parking web system for Manaoag, Pangasinan, Philippines. Features a public driver portal for finding and reserving parking, plus an admin/operator dashboard for real-time monitoring and management.
+> IoT-based smart parking web system for Manaoag, Pangasinan, Philippines. Features a public driver portal for finding and reserving parking, plus an admin/operator dashboard for real-time monitoring and management.
 
-## Tech Stack
+---
 
-- **Frontend:** React.js + Vite + Tailwind CSS
-- **Backend:** Node.js + Express.js
-- **Database:** MongoDB with Mongoose
-- **Real-time:** Socket.IO
-- **Auth:** JWT + bcrypt
-- **Maps:** Leaflet.js
-- **Charts:** Chart.js / Recharts
-- **QR:** qrcode npm package
+## 🛠️ Tech Stack
 
-## Prerequisites
+<p align="left">
+  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS" />
+  <img src="https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white" alt="NodeJS" />
+  <img src="https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB" alt="Express.js" />
+  <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101" alt="Socket.io" />
+  <img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens" alt="JWT" />
+</p>
 
-- Node.js (v18+)
-- MongoDB (local or Atlas)
-- npm or yarn
+* **Frontend:** React.js + Vite + Tailwind CSS
+* **Backend:** Node.js + Express.js
+* **Database:** MongoDB with Mongoose
+* **Real-time:** Socket.IO
+* **Auth:** JWT + bcrypt
+* **Maps:** Leaflet.js / Google Maps
+* **Charts:** Chart.js / Recharts
+* **QR Code:** `qrcode` npm package
 
-## Project Structure
+---
+
+## 📋 Prerequisites
+
+- 🟢 **Node.js** (v18+)
+- 🗄️ **MongoDB** (local or Atlas cloud database)
+- 📦 **npm** or **yarn** package manager
+
+---
+
+## 📂 Project Structure
 
 ```
 parksmart-web/
@@ -29,16 +46,16 @@ parksmart-web/
 └── README.md
 ```
 
-## How to Run
+---
 
-### 1. Clone and navigate
+## 🚀 How to Run
 
+### 1️⃣ Clone and navigate
 ```bash
 cd parksmart-web
 ```
 
-### 2. Setup Backend
-
+### 2️⃣ Setup Backend
 ```bash
 cd backend
 cp .env.example .env
@@ -46,31 +63,28 @@ cp .env.example .env
 npm install
 npm start
 ```
-
 The backend server will start on `http://localhost:5000`.
 
-### 3. Seed Data
-
+### 3️⃣ Seed Data
 ```bash
 cd backend
 node seed/seed.js
 ```
-
 This creates sample lots, slots, users, and reservations.
 
-### 4. Setup Frontend
-
+### 4️⃣ Setup Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-
 The frontend dev server will start on `http://localhost:5173`.
 
-## Environment Variables
+---
 
-### Backend (.env)
+## 🔒 Environment Variables
+
+### ⚡ Backend (.env)
 
 | Variable            | Description                          |
 |---------------------|--------------------------------------|
@@ -85,7 +99,7 @@ The frontend dev server will start on `http://localhost:5173`.
 | CLIENT_URL          | Frontend URL for CORS                |
 | IOT_IP_WHITELIST    | Comma-separated ESP32 IP addresses   |
 
-### Frontend (.env)
+### 💻 Frontend (.env)
 
 | Variable            | Description                          |
 |---------------------|--------------------------------------|
@@ -93,9 +107,11 @@ The frontend dev server will start on `http://localhost:5173`.
 | VITE_SOCKET_URL     | Socket.IO server URL                 |
 | VITE_MAPS_API_KEY   | Google Maps API key (optional)       |
 
-## IoT Integration Guide
+---
 
-### ESP32 Sensor Endpoint
+## 🔌 IoT Integration Guide
+
+### 📡 ESP32 Sensor Endpoint
 
 **URL:** `POST http://<backend>/api/slots/sensor-update`
 
@@ -119,39 +135,40 @@ Content-Type: application/json
 **Status values:** `available`, `occupied`
 
 The backend will:
-1. Update the slot status in MongoDB
-2. Log the sensor reading
-3. Emit `slot:update` via Socket.IO to all connected clients
-4. Flag as anomaly if distance is out of expected range
+1. Update the slot status in MongoDB.
+2. Log the sensor reading.
+3. Emit `slot:update` via Socket.IO to all connected clients.
+4. Flag as anomaly if distance is out of expected range.
 
-### IP Whitelisting
+### 🛡️ IP Whitelisting
 
 Add your ESP32 device IPs to `IOT_IP_WHITELIST` in the backend `.env`:
-
 ```
 IOT_IP_WHITELIST=192.168.1.100,192.168.1.101
 ```
 
-## API Documentation
+---
 
-### Auth
+## 🔗 API Documentation
+
+### 🔑 Auth
 - `POST /api/auth/register` — Register new user
 - `POST /api/auth/login` — User login
 - `POST /api/auth/admin/login` — Admin login
 
-### Lots
+### 🅿️ Lots
 - `GET /api/lots` — List all lots
 - `GET /api/lots/:id` — Get lot details
 - `POST /api/lots` — Create lot (admin)
 - `PUT /api/lots/:id` — Update lot (admin)
 - `DELETE /api/lots/:id` — Delete lot (admin)
 
-### Slots
+### 🔲 Slots
 - `GET /api/lots/:id/slots` — Get slots by lot
 - `PUT /api/slots/:id` — Update slot (admin)
 - `POST /api/slots/sensor-update` — IoT sensor update
 
-### Reservations
+### 📅 Reservations
 - `POST /api/reservations` — Create reservation
 - `GET /api/reservations/:id` — Get reservation
 - `GET /api/reservations/user/:userId` — Get user reservations
@@ -159,29 +176,32 @@ IOT_IP_WHITELIST=192.168.1.100,192.168.1.101
 - `PATCH /api/reservations/:id/cancel` — Cancel reservation
 - `PATCH /api/reservations/:id/complete` — Mark completed
 
-### Users
+### 👤 Users
 - `GET /api/users` — List users (admin)
 - `PATCH /api/users/:id/status` — Toggle user status (admin)
 
-### Reports
+### 📈 Reports
 - `GET /api/reports/daily` — Daily reservation trends
 - `GET /api/reports/hourly-heatmap` — Peak hours heatmap
 - `GET /api/reports/revenue` — Revenue by lot
 - `GET /api/reports/sensor-logs` — Sensor activity logs
 
-## Socket.IO Events
+---
 
-### Server Emits
+## ⚡ Socket.IO Events
+
+### 📤 Server Emits
 - `slot:update` — Slot status changed
 - `reservation:new` — New reservation created
 - `sensor:offline` — Sensor missed ping
 
-### Client Listens
-- Subscribe in `SocketContext.jsx` for global updates
-- `MonitorPage.jsx` listens for `slot:update` per lot
-- `DashboardPage.jsx` listens for `reservation:new` for live feed
+### 📥 Client Listens
+- Subscribe in `SocketContext.jsx` for global updates.
+- `MonitorPage.jsx` listens for `slot:update` per lot.
+- `DashboardPage.jsx` listens for `reservation:new` for live feed.
 
-## License
+---
+
+## 📄 License
 
 MIT
-
