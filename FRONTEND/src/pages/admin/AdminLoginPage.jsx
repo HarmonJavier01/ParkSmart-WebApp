@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import authService from '../../services/authService.js';
 import useAuth from '../../hooks/useAuth.js';
@@ -55,6 +55,15 @@ const AdminLoginPage = () => {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+
+        <div className="text-center mt-6">
+          <Link 
+            to="/account" 
+            className="text-sm font-semibold text-gray-500 hover:text-teal-600 transition duration-150"
+          >
+            Sign In as User
+          </Link>
+        </div>
       </div>
     </div>
   );
