@@ -8,51 +8,78 @@ const LotCard = ({ lot, onMouseEnter, onMouseLeave }) => {
 
   return (
     <div 
-      className="card hover:shadow-md transition cursor-pointer"
+      className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer overflow-hidden flex flex-col"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className="flex justify-between items-start mb-1">
-        <h3 className="font-bold text-lg text-gray-900">{lot.name}</h3>
-        <span className={`text-xs font-bold px-2 py-1 rounded-full ${percentage > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-          {available > 0 ? `${available} available` : 'Full'}
+      {/* Lot Image and Availability Badge */}
+      <div className="relative h-48 w-full overflow-hidden">
+        <img 
+          src={lot.imageUrl || "/images/IMG20260604134124.jpg"} 
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
+          alt={lot.name} 
+        />
+        <span className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-md text-white ${
+          percentage > 50 ? 'bg-green-600' : percentage > 20 ? 'bg-amber-500' : 'bg-red-600'
+        }`}>
+          {available} available
         </span>
       </div>
 
-      {/* Star rating preview */}
-      <div className="flex items-center gap-1 mb-3">
-        <span className="text-xs font-bold text-amber-500">{lot.rating?.toFixed(1) || '5.0'}</span>
-        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-        <span className="text-xs text-gray-400 font-semibold">({lot.ratingCount || 0})</span>
-      </div>
+      {/* Lot Details Content */}
+      <div className="p-5 flex-1 flex flex-col justify-between">
+        <div>
+          <div className="flex justify-between items-start gap-2 mb-1">
+            <h3 className="font-bold text-lg text-gray-900 leading-tight">{lot.name}</h3>
+            <div className="flex items-center gap-1 text-amber-500 font-semibold text-sm shrink-0">
+              <Star className="w-4 h-4 text-amber-500" />
+              <span>{lot.rating?.toFixed(1) || '5.0'}</span>
+            </div>
+          </div>
 
-      <p className="text-sm text-gray-500 mb-3 flex items-center gap-1">
-        <MapPin className="w-4 h-4" />
-        {lot.address}
-      </p>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1 text-sm text-gray-600">
-          <Car className="w-4 h-4" />
-          {total} slots
+          <p className="text-sm text-gray-500 mb-4 flex items-center gap-1">
+            <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+            <span className="truncate">{lot.address}</span>
+          </p>
+
+          <div className="border-t border-gray-100 pt-3 flex items-center justify-between mb-4">
+            <div className="flex items-center gap-1.5 text-sm text-gray-600">
+              <Car className="w-4 h-4 text-gray-400" />
+              <span>{total} slots</span>
+            </div>
+            <div className="text-base font-bold text-gray-900">
+              ₱{lot.ratePerHour}/hr
+            </div>
+          </div>
         </div>
-        <div className="text-sm font-medium text-parking-primary">
-          ₱{lot.ratePerHour}/hr
+
+        <div>
+          {/* Occupancy Progress Bar */}
+          <div className="mb-4">
+            <div className="flex justify-between items-center text-xs font-semibold mb-1">
+              <span className="text-gray-500">Occupancy</span>
+              <span className={percentage > 50 ? 'text-green-600' : percentage > 20 ? 'text-amber-600' : 'text-red-600'}>
+                {percentage}% Available
+              </span>
+            </div>
+            <div className="w-full bg-gray-100 rounded-full h-2">
+              <div
+                className={`h-2 rounded-full transition-all ${
+                  percentage > 50 ? 'bg-green-500' : percentage > 20 ? 'bg-amber-500' : 'bg-red-500'
+                }`}
+                style={{ width: `${percentage}%` }}
+              />
+            </div>
+          </div>
+
+          <Link
+            to={`/parking/${lot._id}`}
+            className="block w-full text-center bg-[#063b31] hover:bg-[#042c25] text-white py-2.5 rounded-lg font-semibold transition duration-200 text-sm"
+          >
+            View Details
+          </Link>
         </div>
       </div>
-      <div className="mt-4">
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full transition-all ${percentage > 50 ? 'bg-green-500' : percentage > 20 ? 'bg-yellow-500' : 'bg-red-500'}`}
-            style={{ width: `${percentage}%` }}
-          />
-        </div>
-      </div>
-      <Link
-        to={`/parking/${lot._id}`}
-        className="mt-4 block text-center btn-primary text-sm"
-      >
-        View Details
-      </Link>
     </div>
   );
 };

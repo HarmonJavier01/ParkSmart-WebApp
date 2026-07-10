@@ -10,6 +10,11 @@ const userService = {
   updateUserStatus: async (id, isActive) => {
     const response = await api.patch(ENDPOINTS.USERS.STATUS(id), { isActive });
     return response.data;
+  },
+
+  getMe: async () => {
+    const response = await api.get(ENDPOINTS.USERS.ME);
+    return response.data;
   }
 };
 

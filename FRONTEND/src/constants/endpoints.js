@@ -31,6 +31,7 @@ export const ENDPOINTS = {
   },
   USERS: {
     BASE: `${API_BASE}/users`,
+    ME: `${API_BASE}/users/me`,
     STATUS: (id) => `${API_BASE}/users/${id}/status`
   },
   REPORTS: {
