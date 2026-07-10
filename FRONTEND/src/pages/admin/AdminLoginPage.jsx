@@ -7,9 +7,15 @@ import InputField from '../../components/forms/InputField.jsx';
 
 const AdminLoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login, isAuthenticated, loading: authLoading } = useAuth();
   const [data, setData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && (user?.role === 'superadmin' || user?.role === 'lot_operator')) {
+      navigate('/admin');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +30,14 @@ const AdminLoginPage = () => {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-teal-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
