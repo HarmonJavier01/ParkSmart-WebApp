@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
-import { GoogleMap, Marker, Circle, useJsApiLoader } from '@react-google-maps/api';
-import { Compass, Navigation, Eye, MapPin } from 'lucide-react';
+import { GoogleMap, Marker, Circle, useJsApiLoader, DirectionsRenderer } from '@react-google-maps/api';
+import { Compass, Navigation, Eye, MapPin, Car } from 'lucide-react';
 import LotMarker from './LotMarker.jsx';
 import SlotMarker from './SlotMarker.jsx';
 
@@ -47,10 +47,58 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
 
   const [map, setMap] = useState(null);
   const [userPos, setUserPos] = useState(null);
+  const [directions, setDirections] = useState(null);
   const [isNavigating, setIsNavigating] = useState(false);
   const [is3D, setIs3D] = useState(false);
   
   const watchIdRef = useRef(null);
+
+  // Fetch user location automatically on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserPos({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.warn('Geolocation initial load error:', error.message);
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    }
+  }, []);
+
+  // Get active lot for directions destination
+  const activeLot = lots.length === 1 ? lots[0] : lots.find(l => l._id === hoveredLotId);
+  const destination = activeLot ? { lat: activeLot.lat, lng: activeLot.lng } : null;
+  const origin = userPos || (destination ? { lat: 15.9766, lng: 120.4869 } : null);
+
+  useEffect(() => {
+    if (!isLoaded || !origin || !destination) {
+      setDirections(null);
+      return;
+    }
+
+    const directionsService = new window.google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin: new window.google.maps.LatLng(origin.lat, origin.lng),
+        destination: new window.google.maps.LatLng(destination.lat, destination.lng),
+        travelMode: window.google.maps.TravelMode.DRIVING
+      },
+      (result, status) => {
+        if (status === window.google.maps.DirectionsStatus.OK) {
+          setDirections(result);
+        } else {
+          console.warn(`error fetching directions: ${status}`);
+          setDirections(null);
+        }
+      }
+    );
+  }, [isLoaded, origin?.lat, origin?.lng, destination?.lat, destination?.lng]);
 
   // Clean up location tracking on unmount
   useEffect(() => {
@@ -275,7 +323,38 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
             }}
           />
         )}
+
+        {directions && (
+          <DirectionsRenderer
+            directions={directions}
+            options={{
+              polylineOptions: {
+                strokeColor: '#3b82f6', // Bright, beautiful blue route polyline
+                strokeOpacity: 0.85,
+                strokeWeight: 6,
+              },
+              suppressMarkers: true, // Keep our custom lot/slots markers
+            }}
+          />
+        )}
       </GoogleMap>
+
+      {/* Floating Directions Route Info Panel */}
+      {directions && (
+        <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-xl border border-teal-500/20 flex items-center gap-3 animate-fade-in font-outfit max-w-[280px]">
+          <div className="w-9 h-9 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-600">
+            <Car className="w-5 h-5 fill-current" />
+          </div>
+          <div>
+            <h4 className="font-extrabold text-[#063b31] text-sm leading-tight">
+              {directions.routes[0].legs[0].duration.text}
+            </h4>
+            <p className="text-xs text-gray-500 font-semibold">
+              {directions.routes[0].legs[0].distance.text} • Drive Route
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Premium Floating Navigation & Perspective HUD Panel */}
       <div className="absolute bottom-6 right-16 z-10 flex flex-col gap-3">
