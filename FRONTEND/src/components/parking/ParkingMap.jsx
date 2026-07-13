@@ -11,6 +11,14 @@ const containerStyle = {
   position: 'relative'
 };
 
+const userBlueDotIcon = `data:image/svg+xml;utf8,${encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 34 34">
+    <circle cx="17" cy="17" r="14" fill="#4285F4" fill-opacity="0.25" />
+    <circle cx="17" cy="17" r="8" fill="#FFFFFF" />
+    <circle cx="17" cy="17" r="6" fill="#4285F4" />
+  </svg>
+`)}`;
+
 // Helper to calculate coordinate of each slot inside a parking row line
 const getSlotCoordinates = (lot, index, totalSlots) => {
   // Custom angles and spacing to align perfectly with the map's satellite layout
@@ -318,8 +326,9 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
           <Marker
             position={userPos}
             icon={{
-              url: 'https://maps.google.com/mapfiles/ms/icons/sportvenue.png', // Sport venue or user pin icon
-              scaledSize: { width: 32, height: 32 }
+              url: userBlueDotIcon,
+              scaledSize: { width: 34, height: 34 },
+              anchor: new window.google.maps.Point(17, 17)
             }}
           />
         )}
