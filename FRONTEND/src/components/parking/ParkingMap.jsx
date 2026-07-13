@@ -350,17 +350,39 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
 
       {/* Floating Directions Route Info Panel */}
       {directions && (
-        <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-xl border border-teal-500/20 flex items-center gap-3 animate-fade-in font-outfit max-w-[280px]">
-          <div className="w-9 h-9 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-600">
-            <Car className="w-5 h-5 fill-current" />
+        <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-teal-500/20 flex flex-col gap-3 animate-fade-in font-outfit w-72">
+          {/* Mins and Km header */}
+          <div className="flex items-center gap-3 border-b border-gray-100 pb-2">
+            <div className="w-9 h-9 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-600 shrink-0">
+              <Car className="w-5 h-5 fill-current" />
+            </div>
+            <div>
+              <h4 className="font-extrabold text-[#063b31] text-sm leading-tight">
+                {directions.routes[0].legs[0].duration.text}
+              </h4>
+              <p className="text-xs text-gray-500 font-semibold">
+                {directions.routes[0].legs[0].distance.text} • Driving Route
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="font-extrabold text-[#063b31] text-sm leading-tight">
-              {directions.routes[0].legs[0].duration.text}
-            </h4>
-            <p className="text-xs text-gray-500 font-semibold">
-              {directions.routes[0].legs[0].distance.text} • Drive Route
-            </p>
+
+          {/* Start and Destination list */}
+          <div className="flex gap-2">
+            <div className="flex flex-col items-center gap-1 py-1 shrink-0">
+              <div className="w-2.5 h-2.5 rounded-full border border-blue-500 bg-blue-500" />
+              <div className="w-0.5 flex-grow border-l border-dashed border-gray-300" />
+              <MapPin className="w-3.5 h-3.5 text-red-500" />
+            </div>
+            <div className="flex-1 text-[11px] font-semibold space-y-1 text-gray-600 overflow-hidden">
+              <div className="truncate">
+                <span className="text-[8px] text-gray-400 block font-bold uppercase tracking-wider">Start point</span>
+                {userPos ? 'Your location' : 'Manaoag Center'}
+              </div>
+              <div className="truncate">
+                <span className="text-[8px] text-gray-400 block font-bold uppercase tracking-wider">Destination</span>
+                {activeLot?.name || 'Parking Lot'}
+              </div>
+            </div>
           </div>
         </div>
       )}
