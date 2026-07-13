@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, CalendarCheck, Car, ArrowRight, ChevronRight } from 'lucide-react';
 import LotCard from '../../components/parking/LotCard.jsx';
 import useParkingLots from '../../hooks/useParkingLots.js';
-import LoadingSpinner from '../../components/common/LoadingSpinner.jsx';
+import { LotCardSkeleton } from '../../components/common/SkeletonLoader.jsx';
 
 const LandingPage = () => {
   const { lots, loading } = useParkingLots();
@@ -98,7 +98,11 @@ const LandingPage = () => {
             </Link>
           </div>
           {loading ? (
-            <LoadingSpinner />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <LotCardSkeleton />
+              <LotCardSkeleton />
+              <LotCardSkeleton />
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {lots.slice(0, 3).map((lot) => (

@@ -10,7 +10,7 @@ import useSlots from '../../hooks/useSlots.js';
 import lotService from '../../services/lotService.js';
 import reviewService from '../../services/reviewService.js';
 import { useState, useEffect } from 'react';
-import LoadingSpinner from '../../components/common/LoadingSpinner.jsx';
+import { LotDetailPageSkeleton } from '../../components/common/SkeletonLoader.jsx';
 import ParkingMap from '../../components/parking/ParkingMap.jsx';
 import useAuth from '../../hooks/useAuth.js';
 
@@ -175,7 +175,7 @@ const LotDetailPage = () => {
     return 0;
   });
 
-  if (loading || slotsLoading) return <LoadingSpinner fullScreen />;
+  if (loading || slotsLoading) return <LotDetailPageSkeleton />;
   if (!lot) return <div className="text-center py-20 font-outfit text-gray-500">Lot not found</div>;
 
   // Image list fallback

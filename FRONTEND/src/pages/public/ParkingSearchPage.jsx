@@ -4,7 +4,7 @@ import { Search, SlidersHorizontal } from 'lucide-react';
 import ParkingMap from '../../components/parking/ParkingMap.jsx';
 import LotCard from '../../components/parking/LotCard.jsx';
 import useParkingLots from '../../hooks/useParkingLots.js';
-import LoadingSpinner from '../../components/common/LoadingSpinner.jsx';
+import { ParkingSearchSkeleton } from '../../components/common/SkeletonLoader.jsx';
 import useAuth from '../../hooks/useAuth.js';
 
 const ParkingSearchPage = ({ isTab = false }) => {
@@ -72,7 +72,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
     return result;
   }, [lots, searchQuery, availableOnly, selectedSlotType, sortBy]);
 
-  if (loading) return <LoadingSpinner fullScreen />;
+  if (loading) return <ParkingSearchSkeleton isTab={isTab} />;
 
   return (
     <div className={isTab ? "w-full" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>
