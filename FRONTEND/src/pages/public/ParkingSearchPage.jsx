@@ -23,6 +23,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
   const { lots, loading } = useParkingLots();
   const [searchQuery, setSearchQuery] = useState('');
   const [availableOnly, setAvailableOnly] = useState(false);
+  const [selectedSlotType, setSelectedSlotType] = useState('all');
   const [sortBy, setSortBy] = useState('distance');
   const [hoveredLotId, setHoveredLotId] = useState(null);
 
@@ -60,12 +61,16 @@ const ParkingSearchPage = ({ isTab = false }) => {
       result = result.filter((lot) => (lot.availableSlots || 0) > 0);
     }
 
+    if (selectedSlotType !== 'all') {
+      result = result.filter((lot) => lot.slotTypes && lot.slotTypes.includes(selectedSlotType));
+    }
+
     if (sortBy === 'availability') {
       result.sort((a, b) => (b.availableSlots || 0) - (a.availableSlots || 0));
     }
 
     return result;
-  }, [lots, searchQuery, availableOnly, sortBy]);
+  }, [lots, searchQuery, availableOnly, selectedSlotType, sortBy]);
 
   if (loading) return <LoadingSpinner fullScreen />;
 
@@ -87,8 +92,8 @@ const ParkingSearchPage = ({ isTab = false }) => {
             />
           </div>
 
-          <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-2 text-sm cursor-pointer whitespace-nowrap">
               <input
                 type="checkbox"
                 checked={availableOnly}
@@ -97,13 +102,26 @@ const ParkingSearchPage = ({ isTab = false }) => {
               />
               Available Now
             </label>
+            
+            <select
+              value={selectedSlotType}
+              onChange={(e) => setSelectedSlotType(e.target.value)}
+              className="text-sm border border-gray-300 rounded-lg px-2 py-1 max-w-[120px]"
+            >
+              <option value="all">All Types</option>
+              <option value="regular">Regular</option>
+              <option value="PWD">PWD</option>
+              <option value="motorcycle">Motorcycle</option>
+              <option value="ev">EV</option>
+            </select>
+
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="text-sm border border-gray-300 rounded-lg px-2 py-1"
+              className="text-sm border border-gray-300 rounded-lg px-2 py-1 max-w-[120px]"
             >
-              <option value="distance">Sort by Distance</option>
-              <option value="availability">Sort by Availability</option>
+              <option value="distance">Sort by Dist</option>
+              <option value="availability">Sort by Avail</option>
             </select>
           </div>
 

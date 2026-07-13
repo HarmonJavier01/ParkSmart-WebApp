@@ -10,9 +10,11 @@ export const getLots = async (req, res, next) => {
           lotId: lot._id,
           status: 'available'
         });
+        const slotTypes = await Slot.distinct('type', { lotId: lot._id });
         return {
           ...lot.toObject(),
-          availableSlots: availableCount
+          availableSlots: availableCount,
+          slotTypes: slotTypes
         };
       })
     );
