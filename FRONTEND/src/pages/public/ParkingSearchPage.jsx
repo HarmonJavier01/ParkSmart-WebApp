@@ -23,7 +23,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
   const { lots, loading } = useParkingLots();
   const [searchQuery, setSearchQuery] = useState('');
   const [availableOnly, setAvailableOnly] = useState(false);
-  const [selectedSlotType, setSelectedSlotType] = useState('all');
+  const [selectedSlotType, setSelectedSlotType] = useState('regular');
   const [sortBy, setSortBy] = useState('distance');
   const [hoveredLotId, setHoveredLotId] = useState(null);
 
@@ -106,10 +106,10 @@ const ParkingSearchPage = ({ isTab = false }) => {
             <select
               value={selectedSlotType}
               onChange={(e) => setSelectedSlotType(e.target.value)}
-              className="text-sm border border-gray-300 rounded-lg px-2 py-1 max-w-[120px]"
+              className="text-sm border border-teal-600 rounded-lg px-2 py-1 max-w-[150px] font-semibold text-teal-700 bg-teal-50/50 hover:bg-teal-50 transition"
             >
               <option value="all">All Types</option>
-              <option value="regular">Regular</option>
+              <option value="regular">Regular (Recommended)</option>
               <option value="PWD">PWD</option>
               <option value="motorcycle">Motorcycle</option>
               <option value="ev">EV</option>
