@@ -1,3 +1,6 @@
+// TODO: Reservations must be removed.
+// All reservation controller methods and logic in this file must be removed completely.
+
 import Reservation from '../models/Reservation.js';
 import Slot from '../models/Slot.js';
 import ParkingLot from '../models/ParkingLot.js';

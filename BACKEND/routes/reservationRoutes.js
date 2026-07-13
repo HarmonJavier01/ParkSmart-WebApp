@@ -12,12 +12,15 @@ import { requireAdmin } from '../middleware/adminMiddleware.js';
 
 const router = express.Router();
 
+// TODO: Reservations must be removed. All reservation endpoints are commented out.
+/*
 router.post('/', createReservation);
 router.get('/user/:userId', protect, getUserReservations);
 router.get('/:id', getReservationById);
 router.get('/', protect, requireAdmin, getAllReservations);
 router.patch('/:id/cancel', protect, cancelReservation);
 router.patch('/:id/complete', protect, requireAdmin, completeReservation);
+*/
 
 export default router;
 

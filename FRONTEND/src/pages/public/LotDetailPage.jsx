@@ -80,9 +80,12 @@ const LotDetailPage = () => {
   }, [lotId]);
 
   const handleSlotClick = (slot) => {
+    // TODO: Reservations must be removed. Slot click reservation navigation is commented out.
+    /*
     if (slot.status === 'available') {
       navigate(`/reserve/${slot._id}?lotId=${lotId}`);
     }
+    */
   };
 
   const handleReviewSubmit = async (e) => {
@@ -217,7 +220,9 @@ const LotDetailPage = () => {
             title={`Slots (${lot.availableSlots || 0} available)`}
           />
           <p className="text-sm text-gray-400 text-center bg-gray-50/50 py-3 rounded-xl border border-dashed border-gray-100">
-            Click on a green (available) slot to reserve it.
+            {/* TODO: Reservations must be removed. Click instructions commented out. */}
+            {/* Click on a green (available) slot to reserve it. */}
+            Green slots are currently available. Red slots are occupied.
           </p>
 
           {/* Interactive Google Map below the Slot Grid */}

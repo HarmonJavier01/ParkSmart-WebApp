@@ -1,3 +1,7 @@
+// TODO: User login/registration features must be removed.
+// All user authentication controller methods (register, verifyOTP, resendOTP, login, forgotPassword, resetPassword, verifyEmailLink, googleLogin) must be removed.
+// Only adminLogin should be retained.
+
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';

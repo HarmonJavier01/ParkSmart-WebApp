@@ -9,8 +9,7 @@ const LandingPage = () => {
 
   const stats = [
     { label: 'Parking Lots', value: lots.length, icon: MapPin },
-    { label: 'Available Slots', value: lots.reduce((acc, lot) => acc + (lot.availableSlots || 0), 0), icon: Car },
-    { label: 'Reservations Today', value: '120+', icon: CalendarCheck }
+    { label: 'Available Slots', value: lots.reduce((acc, lot) => acc + (lot.availableSlots || 0), 0), icon: Car }
   ];
 
   return (
@@ -27,7 +26,7 @@ const LandingPage = () => {
             Find Parking in Manaoag Instantly
           </h1>
           <p className="text-lg md:text-xl text-teal-100 mb-10 max-w-3xl mx-auto font-normal">
-            Real-time smart parking with IoT sensors. Reserve your spot before you arrive and skip the hassle of searching.
+            Real-time smart parking with IoT sensors. View available spots before you arrive and skip the hassle of searching.
           </p>
           <Link
             to="/parking"
@@ -42,7 +41,7 @@ const LandingPage = () => {
       {/* Stats Strip */}
       <section className="bg-white border-b border-gray-100 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {stats.map((stat) => (
               <div key={stat.label} className="flex items-center gap-4 p-5 bg-[#f8fafc] rounded-xl border border-gray-50">
                 <div className="w-12 h-12 bg-[#f1f5f9] text-[#063b31] rounded-lg flex items-center justify-center shrink-0">
@@ -65,11 +64,10 @@ const LandingPage = () => {
             <h2 className="text-3xl font-bold text-gray-900">How It Works</h2>
             <div className="w-12 h-1 bg-parking-primary mx-auto mt-3 rounded-full"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
               { step: '01', title: 'Find', desc: 'Browse parking lots near you with real-time availability using our intuitive map interface.' },
-              { step: '02', title: 'Reserve', desc: 'Select a specific slot, pick your duration, and pay securely within seconds via the app.' },
-              { step: '03', title: 'Park', desc: 'Show your QR ticket at the entrance and park hassle-free in your designated spot.' }
+              { step: '02', title: 'Park', desc: 'Arrive at the location and park hassle-free in any of the open/available spots.' }
             ].map((item) => (
               <div key={item.step} className="text-center">
                 <div className="w-16 h-16 bg-[#063b31] text-white rounded-xl flex items-center justify-center text-2xl font-bold mx-auto mb-4">

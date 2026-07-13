@@ -43,13 +43,15 @@ function App() {
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/parking" element={<ParkingSearchPage />} />
                   <Route path="/parking/:lotId" element={<LotDetailPage />} />
-                  <Route path="/reserve/:slotId" element={<ReservationPage />} />
-                  <Route path="/ticket/:reservationId" element={<TicketPage />} />
-                  <Route path="/account" element={<AccountPage />} />
-                  <Route path="/google-callback" element={<GoogleCallback />} />
-                  <Route path="/verify-email/:token" element={<VerifyEmailPage />} />
-                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                  <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+                  {/* TODO: Reservations must be removed. Route commented out. */}
+                  {/* <Route path="/reserve/:slotId" element={<ReservationPage />} /> */}
+                  {/* <Route path="/ticket/:reservationId" element={<TicketPage />} /> */}
+                  {/* TODO: User account and login must be removed. Route commented out. */}
+                  {/* <Route path="/account" element={<AccountPage />} /> */}
+                  {/* <Route path="/google-callback" element={<GoogleCallback />} /> */}
+                  {/* <Route path="/verify-email/:token" element={<VerifyEmailPage />} /> */}
+                  {/* <Route path="/forgot-password" element={<ForgotPasswordPage />} /> */}
+                  {/* <Route path="/reset-password/:token" element={<ResetPasswordPage />} /> */}
                 </Routes>
               </main>
               <Footer />
@@ -67,7 +69,8 @@ function App() {
                 <Route path="/" element={<DashboardPage />} />
                 <Route path="/lots" element={<LotsManagementPage />} />
                 <Route path="/monitor" element={<MonitorPage />} />
-                <Route path="/reservations" element={<ReservationsAdminPage />} />
+                {/* TODO: Reservations must be removed. Route commented out. */}
+                {/* <Route path="/reservations" element={<ReservationsAdminPage />} /> */}
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/reports" element={<ReportsPage />} />
                 <Route path="/sensors" element={<SensorLogsPage />} />

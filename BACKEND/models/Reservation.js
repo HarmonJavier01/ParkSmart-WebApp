@@ -1,3 +1,5 @@
+// TODO: Reservations must be removed.
+// This database model is kept but should be removed in the future.
 import mongoose from 'mongoose';
 
 const reservationSchema = new mongoose.Schema({

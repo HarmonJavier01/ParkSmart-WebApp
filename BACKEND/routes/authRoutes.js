@@ -14,15 +14,20 @@ import { authLimiter } from '../middleware/rateLimiter.js';
 
 const router = express.Router();
 
+// TODO: User login/registration must be removed. All user auth endpoints commented out.
+/*
 router.post('/register', authLimiter, register);
 router.post('/verify-otp', authLimiter, verifyOTP);
 router.post('/resend-otp', authLimiter, resendOTP);
 router.post('/login', authLimiter, login);
+*/
 router.post('/admin/login', authLimiter, adminLogin);
+/*
 router.post('/forgot-password', authLimiter, forgotPassword);
 router.post('/reset-password', authLimiter, resetPassword);
 router.get('/verify-email/:token', authLimiter, verifyEmailLink);
 router.post('/google-login', authLimiter, googleLogin);
+*/
 
 export default router;
 

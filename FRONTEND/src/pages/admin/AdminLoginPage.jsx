@@ -70,14 +70,15 @@ const AdminLoginPage = () => {
           </button>
         </form>
 
-        <div className="text-center mt-6">
+        {/* TODO: User login must be removed. Link commented out. */}
+        {/* <div className="text-center mt-6">
           <Link 
             to="/account" 
             className="text-sm font-semibold text-gray-500 hover:text-teal-600 transition duration-150"
           >
             Sign In as User
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );

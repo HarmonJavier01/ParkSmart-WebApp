@@ -48,6 +48,8 @@ const OnboardingTour = () => {
       accentBg: "bg-cyan-500/10",
       badge: "IoT Live Status"
     },
+    // TODO: Reservations must be removed. Booking and ticket steps commented out.
+    /*
     {
       title: "Instant Space Booking 📅",
       description: "Reserve your ideal parking slot ahead of time! Pick a specific spot, specify your booking duration, and secure it immediately.",
@@ -64,6 +66,7 @@ const OnboardingTour = () => {
       accentBg: "bg-indigo-500/10",
       badge: "Seamless Entry"
     },
+    */
     {
       title: "You are Ready to Roll! 🎉",
       description: "You've successfully learned the basics of ParkSmart! Let's find your perfect parking slot right now.",

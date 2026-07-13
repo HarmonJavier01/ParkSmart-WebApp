@@ -24,21 +24,29 @@ const Navbar = () => {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6 font-semibold">
+            <Link to="/parking" className="hover:text-teal-200 transition">Find Parking</Link>
             {isAuthenticated ? (
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/10 border border-white/5 shadow-xs">
-                <div className="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-300 font-extrabold text-xs border border-teal-400/20">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-                <span className="text-sm font-bold text-teal-100">{user?.name}</span>
-              </div>
-            ) : (
               <>
-                <Link to="/parking" className="hover:text-teal-200 transition">Find Parking</Link>
-                <Link to="/account" className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 transition px-4 py-2 rounded-xl text-white font-bold border border-white/10">
-                  <User className="w-4 h-4" />
-                  Login
-                </Link>
+                <Link to="/admin" className="hover:text-teal-200 transition">Dashboard</Link>
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/10 border border-white/5 shadow-xs">
+                  <div className="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-300 font-extrabold text-xs border border-teal-400/20">
+                    {user?.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-bold text-teal-100">{user?.name}</span>
+                </div>
+                <button 
+                  onClick={handleLogout} 
+                  className="flex items-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 transition px-3.5 py-2 rounded-xl text-red-300 font-bold border border-red-500/10 text-xs"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Logout
+                </button>
               </>
+            ) : (
+              <Link to="/admin/login" className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 transition px-4 py-2 rounded-xl text-white font-bold border border-white/10">
+                <User className="w-4 h-4" />
+                Login
+              </Link>
             )}
           </div>
 
@@ -112,7 +120,7 @@ const Navbar = () => {
 
             {isAuthenticated ? (
               <Link 
-                to={user?.role === 'user' ? '/account' : '/admin'} 
+                to="/admin" 
                 className="flex items-center justify-between p-3.5 rounded-2xl hover:bg-teal-800/40 transition text-teal-100 hover:text-white group border border-transparent hover:border-teal-800/30"
                 onClick={() => setMobileOpen(false)}
               >
@@ -124,13 +132,13 @@ const Navbar = () => {
               </Link>
             ) : (
               <Link 
-                to="/account" 
+                to="/admin/login" 
                 className="flex items-center justify-between p-3.5 rounded-2xl hover:bg-teal-800/40 transition text-teal-100 hover:text-white group border border-transparent hover:border-teal-800/30"
                 onClick={() => setMobileOpen(false)}
               >
                 <div className="flex items-center gap-3">
                   <User className="w-5 h-5 text-teal-400 group-hover:scale-110 transition-transform" />
-                  <span>Login / Register</span>
+                  <span>Admin/Operator Login</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-teal-500 group-hover:translate-x-0.5 transition-transform" />
               </Link>

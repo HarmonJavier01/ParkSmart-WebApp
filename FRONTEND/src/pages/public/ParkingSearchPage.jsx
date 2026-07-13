@@ -11,11 +11,14 @@ const ParkingSearchPage = ({ isTab = false }) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
+  // TODO: User login/account page must be removed. Redirect commented out.
+  /*
   useEffect(() => {
     if (!isTab && isAuthenticated) {
       navigate('/account?tab=parking', { replace: true });
     }
   }, [isTab, isAuthenticated, navigate]);
+  */
 
   const { lots, loading } = useParkingLots();
   const [searchQuery, setSearchQuery] = useState('');
