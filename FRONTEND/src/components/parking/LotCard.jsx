@@ -47,9 +47,10 @@ const LotCard = ({ lot, onMouseEnter, onMouseLeave }) => {
               <Car className="w-4 h-4 text-gray-400" />
               <span>{total} slots</span>
             </div>
-            <div className="text-base font-bold text-gray-900">
+            {/* TODO: Pricing must be removed. Commented out as requested. */}
+            {/* <div className="text-base font-bold text-gray-900">
               ₱{lot.ratePerHour}/hr
-            </div>
+            </div> */}
           </div>
         </div>
 

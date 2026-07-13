@@ -373,13 +373,14 @@ const LotDetailPage = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3.5 text-sm text-gray-600">
+                    {/* TODO: Pricing must be removed. Commented out as requested. */}
+                    {/* <div className="flex items-start gap-3.5 text-sm text-gray-600">
                       <Banknote className="w-5 h-5 text-teal-500 shrink-0 mt-0.5" />
                       <div>
                         <p className="font-bold text-teal-600">₱{lot.ratePerHour}/hr</p>
                         <span className="text-xs text-gray-400">Regular parking rate</span>
                       </div>
-                    </div>
+                    </div> */}
                     
                     <hr className="border-gray-100 my-4" />
 
