@@ -15,7 +15,7 @@ const LotsManagementPage = () => {
   const [expandedLot, setExpandedLot] = useState(null);
   const [expandedSlots, setExpandedSlots] = useState([]);
   const [form, setForm] = useState({
-    name: '', address: '', lat: '', lng: '', totalSlots: '', ratePerHour: '',
+    name: '', address: '', lat: '', lng: '', totalSlots: '', ratePerHour: 0,
     operatingHours: { open: '06:00', close: '22:00' }, isActive: true
   });
 
@@ -78,7 +78,7 @@ const LotsManagementPage = () => {
   const openCreate = () => {
     setEditingLot(null);
     setForm({
-      name: '', address: '', lat: '', lng: '', totalSlots: '', ratePerHour: '',
+      name: '', address: '', lat: '', lng: '', totalSlots: '', ratePerHour: 0,
       operatingHours: { open: '06:00', close: '22:00' }, isActive: true
     });
     setModalOpen(true);
@@ -128,7 +128,8 @@ const LotsManagementPage = () => {
               <th className="text-left py-3 px-4 font-medium text-gray-500">Name</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Address</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Slots</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-500">Rate</th>
+              {/* TODO: Pricing must be removed. Column commented out. */}
+              {/* <th className="text-left py-3 px-4 font-medium text-gray-500">Rate</th> */}
               <th className="text-left py-3 px-4 font-medium text-gray-500">Status</th>
               <th className="text-left py-3 px-4 font-medium text-gray-500">Actions</th>
             </tr>
@@ -140,7 +141,8 @@ const LotsManagementPage = () => {
                   <td className="py-3 px-4 font-medium">{lot.name}</td>
                   <td className="py-3 px-4 text-gray-600">{lot.address}</td>
                   <td className="py-3 px-4">{lot.totalSlots}</td>
-                  <td className="py-3 px-4">₱{lot.ratePerHour}/hr</td>
+                  {/* TODO: Pricing must be removed. Cell commented out. */}
+                  {/* <td className="py-3 px-4">₱{lot.ratePerHour}/hr</td> */}
                   <td className="py-3 px-4">
                     <span className={`text-xs font-bold px-2 py-1 rounded-full ${lot.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                       {lot.isActive ? 'Active' : 'Inactive'}
@@ -162,7 +164,7 @@ const LotsManagementPage = () => {
                 </tr>
                 {expandedLot === lot._id && (
                   <tr>
-                    <td colSpan="6" className="px-4 py-4 bg-gray-50">
+                    <td colSpan="5" className="px-4 py-4 bg-gray-50">
                       <p className="text-sm font-medium mb-3">Slot Management</p>
                       <SlotGrid slots={expandedSlots} onSlotClick={handleSlotUpdate} />
                     </td>
@@ -187,7 +189,8 @@ const LotsManagementPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <InputField label="Total Slots" type="number" value={form.totalSlots} onChange={(e) => setForm({ ...form, totalSlots: parseInt(e.target.value) })} required />
-                <InputField label="Rate/Hour" type="number" value={form.ratePerHour} onChange={(e) => setForm({ ...form, ratePerHour: parseFloat(e.target.value) })} required />
+                {/* TODO: Pricing must be removed. Input field commented out. */}
+                {/* <InputField label="Rate/Hour" type="number" value={form.ratePerHour} onChange={(e) => setForm({ ...form, ratePerHour: parseFloat(e.target.value) })} required /> */}
               </div>
               <SelectField
                 label="Status"
