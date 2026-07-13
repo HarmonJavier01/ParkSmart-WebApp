@@ -47,6 +47,42 @@ const LotDetailPage = () => {
   // Notifications
   const [toastMessage, setToastMessage] = useState('');
 
+  const [isSaved, setIsSaved] = useState(() => {
+    const saved = localStorage.getItem(`saved_lot_${lotId}`);
+    return saved === 'true';
+  });
+
+  const handleSaveToggle = () => {
+    const nextSaved = !isSaved;
+    setIsSaved(nextSaved);
+    localStorage.setItem(`saved_lot_${lotId}`, String(nextSaved));
+    showToast(nextSaved ? 'Saved to bookmarks!' : 'Removed from bookmarks!');
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: lot?.name || 'ParkSmart Parking Lot',
+          text: `Check out available parking at ${lot?.name || 'ParkSmart'} in Manaoag!`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      showToast('Link copied to clipboard!');
+    }
+  };
+
+  const handleSendPhone = () => {
+    const phone = prompt("Enter your mobile number:");
+    if (phone) {
+      showToast(`Parking details sent to ${phone}!`);
+    }
+  };
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3000);
@@ -304,7 +340,7 @@ const LotDetailPage = () => {
                   {/* Quick Action Buttons */}
                   <div className="grid grid-cols-5 gap-1.5 text-center bg-gray-50 p-3 rounded-2xl border border-gray-100">
                     <button 
-                      onClick={() => showToast('Simulating route navigation to parking lot...')} 
+                      onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${lot?.lat},${lot?.lng}`, '_blank')} 
                       className="flex flex-col items-center gap-1 group"
                     >
                       <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center transition group-hover:scale-105 active:scale-95">
@@ -313,16 +349,16 @@ const LotDetailPage = () => {
                       <span className="text-[10px] font-bold text-gray-500 group-hover:text-teal-600">Directions</span>
                     </button>
                     <button 
-                      onClick={() => showToast('Saved to your bookmarks!')} 
+                      onClick={handleSaveToggle} 
                       className="flex flex-col items-center gap-1 group"
                     >
-                      <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center transition group-hover:scale-105 active:scale-95">
-                        <Bookmark className="w-4 h-4" />
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center transition group-hover:scale-105 active:scale-95 ${isSaved ? 'bg-teal-100/70 text-teal-600' : 'bg-teal-50 text-teal-600'}`}>
+                        <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-teal-600 text-teal-600' : ''}`} />
                       </div>
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-teal-600">Save</span>
+                      <span className={`text-[10px] font-bold ${isSaved ? 'text-teal-600' : 'text-gray-500 group-hover:text-teal-600'}`}>Save</span>
                     </button>
                     <button 
-                      onClick={() => showToast('Searching for nearby attractions...')} 
+                      onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=tourist+attractions+near=${lot?.lat},${lot?.lng}`, '_blank')} 
                       className="flex flex-col items-center gap-1 group"
                     >
                       <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center transition group-hover:scale-105 active:scale-95">
@@ -331,7 +367,7 @@ const LotDetailPage = () => {
                       <span className="text-[10px] font-bold text-gray-500 group-hover:text-teal-600">Nearby</span>
                     </button>
                     <button 
-                      onClick={() => showToast('Parking details sent to registered phone number!')} 
+                      onClick={handleSendPhone} 
                       className="flex flex-col items-center gap-1 group"
                     >
                       <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center transition group-hover:scale-105 active:scale-95">
@@ -340,10 +376,7 @@ const LotDetailPage = () => {
                       <span className="text-[10px] font-bold text-gray-500 group-hover:text-teal-600">Send phone</span>
                     </button>
                     <button 
-                      onClick={() => {
-                        navigator.clipboard.writeText(window.location.href);
-                        showToast('Link copied to clipboard!');
-                      }} 
+                      onClick={handleShare} 
                       className="flex flex-col items-center gap-1 group"
                     >
                       <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center transition group-hover:scale-105 active:scale-95">
