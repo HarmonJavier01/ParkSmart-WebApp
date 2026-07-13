@@ -79,6 +79,15 @@ const AdminLoginPage = () => {
             Sign In as User
           </Link>
         </div> */}
+
+        <div className="text-center mt-5">
+          <Link 
+            to="/" 
+            className="text-xs font-bold text-gray-400 hover:text-teal-600 transition duration-150 uppercase tracking-widest"
+          >
+            Back to Home Page
+          </Link>
+        </div>
       </div>
     </div>
   );
