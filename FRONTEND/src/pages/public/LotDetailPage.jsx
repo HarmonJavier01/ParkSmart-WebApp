@@ -39,6 +39,7 @@ const LotDetailPage = () => {
   const [newRating, setNewRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(null);
   const [newFeedback, setNewFeedback] = useState('');
+  const [guestName, setGuestName] = useState('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   // Lightbox photo viewer state
@@ -131,7 +132,8 @@ const LotDetailPage = () => {
       setIsSubmittingReview(true);
       const response = await reviewService.createReview(lotId, {
         rating: newRating,
-        feedback: newFeedback
+        feedback: newFeedback,
+        guestName: !isAuthenticated ? guestName : undefined
       });
       showToast(response.message || 'Review saved!');
       
@@ -144,6 +146,7 @@ const LotDetailPage = () => {
       setShowReviewModal(false);
       setNewRating(5);
       setNewFeedback('');
+      setGuestName('');
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || 'Failed to submit review');
@@ -487,12 +490,7 @@ const LotDetailPage = () => {
                     <div className="flex justify-between items-center gap-3 pt-2">
                       <button
                         onClick={() => {
-                          if (!isAuthenticated) {
-                            showToast('Please log in to write a review');
-                            navigate('/account');
-                          } else {
-                            setShowReviewModal(true);
-                          }
+                          setShowReviewModal(true);
                         }}
                         className="flex-1 text-center py-2.5 px-4 bg-teal-50 hover:bg-teal-100 border border-teal-200/50 text-teal-700 font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5"
                       >
@@ -650,6 +648,21 @@ const LotDetailPage = () => {
 
             <form onSubmit={handleReviewSubmit} className="space-y-5">
               
+              {/* Guest name input if not logged in */}
+              {!isAuthenticated && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Your Name</label>
+                  <input
+                    type="text"
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                    placeholder="Enter your name (e.g. John Doe)"
+                    required
+                    className="w-full text-sm border border-gray-200 rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition placeholder:text-gray-300 font-medium bg-white"
+                  />
+                </div>
+              )}
+
               {/* Star selector */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Your Rating</label>

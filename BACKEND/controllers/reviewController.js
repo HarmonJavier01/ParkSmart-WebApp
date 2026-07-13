@@ -1,5 +1,7 @@
 import Review from '../models/Review.js';
 import ParkingLot from '../models/ParkingLot.js';
+import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
 // Get all reviews for a lot with breakdown stats
 export const getLotReviews = async (req, res, next) => {
@@ -47,8 +49,37 @@ export const getLotReviews = async (req, res, next) => {
 export const createReview = async (req, res, next) => {
   try {
     const { lotId } = req.params;
-    const { rating, feedback } = req.body;
-    const userId = req.user._id;
+    const { rating, feedback, guestName } = req.body;
+    
+    let userId = null;
+
+    // Check if token is passed for authenticated users
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        userId = decoded.id;
+      } catch (err) {
+        console.warn('Optional token verification failed:', err.message);
+      }
+    }
+
+    // If no authenticated user, use/create a guest user account
+    if (!userId) {
+      const name = (guestName && guestName.trim()) || 'Guest Visitor';
+      // Find or create a Guest user for this name to satisfy index uniqueness
+      let guestUser = await User.findOne({ name, role: 'user' });
+      if (!guestUser) {
+        guestUser = await User.create({
+          name,
+          email: `guest_${Date.now()}_${Math.floor(Math.random() * 1000)}@parksmart.ph`,
+          password: 'GuestPassword123!',
+          role: 'user',
+          isVerified: true
+        });
+      }
+      userId = guestUser._id;
+    }
 
     if (!rating || rating < 1 || rating > 5) {
       return res.status(400).json({ message: 'Please provide a rating between 1 and 5 stars' });
