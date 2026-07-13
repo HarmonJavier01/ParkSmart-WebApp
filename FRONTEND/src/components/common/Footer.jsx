@@ -20,7 +20,8 @@ const Footer = () => {
           <h3 className="text-white font-bold text-lg mb-4">Quick Links</h3>
           <div className="space-y-2 text-sm">
             <a href="/parking" className="block hover:text-white transition">Find Parking</a>
-            <a href="/account" className="block hover:text-white transition">My Account</a>
+            {/* TODO: User account must be removed. Commented out as requested. */}
+            {/* <a href="/account" className="block hover:text-white transition">My Account</a> */}
             <a href="/admin" className="block hover:text-white transition">Admin Dashboard</a>
           </div>
         </div>
