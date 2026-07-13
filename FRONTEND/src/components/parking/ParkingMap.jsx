@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { GoogleMap, Marker, Circle, useJsApiLoader, DirectionsRenderer } from '@react-google-maps/api';
-import { Compass, Navigation, Eye, MapPin, Car, ArrowUpDown, Search, ChevronDown } from 'lucide-react';
+import { Compass, Navigation, Eye, MapPin, Car, ArrowUpDown, Search, ChevronDown, MoreVertical } from 'lucide-react';
 import LotMarker from './LotMarker.jsx';
 import SlotMarker from './SlotMarker.jsx';
 
@@ -50,6 +50,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
   const [directions, setDirections] = useState(null);
   const [isNavigating, setIsNavigating] = useState(false);
   const [is3D, setIs3D] = useState(false);
+  const [showPlanner, setShowPlanner] = useState(true);
   
   const watchIdRef = useRef(null);
 
@@ -156,8 +157,8 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
     }
   };
 
-  const origin = startCoords || userPos || (activeLot ? { lat: 15.9766, lng: 120.4869 } : null);
-  const destination = destCoords || (activeLot ? { lat: activeLot.lat, lng: activeLot.lng } : null);
+  const origin = startCoords || userPos || { lat: 15.9766, lng: 120.4869 };
+  const destination = destCoords || (lots.length > 0 ? { lat: lots[0].lat, lng: lots[0].lng } : null);
 
   useEffect(() => {
     if (!isLoaded || !origin || !destination) {
@@ -422,86 +423,108 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
         )}
       </GoogleMap>
 
+      {/* Collapsed Directions Trigger (3 Dots Menu Button) */}
+      {!showPlanner && (
+        <button
+          onClick={() => setShowPlanner(true)}
+          title="Show Directions Planner"
+          className="absolute top-4 left-4 z-20 w-10 h-10 bg-white/95 backdrop-blur-md shadow-lg border border-teal-500/20 rounded-xl flex items-center justify-center text-teal-600 hover:bg-teal-50 transition-all duration-300 hover:scale-105 active:scale-95"
+        >
+          <MoreVertical className="w-5 h-5 text-[#063b31]" />
+        </button>
+      )}
+
       {/* Premium Directions Planner HUD Panel */}
-      <div className="absolute top-4 left-4 z-20 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-teal-500/20 p-4 font-outfit space-y-3">
-        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Directions Planner</span>
-          {directions && (
-            <span className="text-[10px] bg-teal-500/10 text-teal-700 px-2 py-0.5 rounded-full font-bold">
-              {directions.routes[0].legs[0].distance.text} ({directions.routes[0].legs[0].duration.text})
-            </span>
-          )}
-        </div>
-        
-        <div className="flex items-center gap-2">
-          {/* vertical dots/icons side bar */}
-          <div className="flex flex-col items-center gap-1 self-stretch py-2 shrink-0">
-            <div className="w-3.5 h-3.5 rounded-full border-2 border-blue-500 flex items-center justify-center bg-white">
-              <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-            </div>
-            <div className="w-0.5 flex-1 border-l-2 border-dotted border-gray-300" />
-            <MapPin className="w-3.5 h-3.5 text-red-500" />
-          </div>
-
-          {/* inputs column */}
-          <div className="flex-1 space-y-2">
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                value={startInput}
-                onChange={(e) => setStartInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleStartSearch()}
-                onBlur={() => handleStartSearch()}
-                placeholder="Choose starting point..."
-                className="w-full text-xs font-semibold pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:bg-white transition"
-              />
-              <Search className="absolute left-2.5 w-3.5 h-3.5 text-gray-400" />
-            </div>
-
-            <div className="relative">
-              <select
-                value={destInput}
-                onChange={(e) => handleDestSelect(e.target.value)}
-                className="w-full text-xs font-semibold pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-red-500 focus:bg-white transition appearance-none"
+      {showPlanner && (
+        <div className="absolute top-4 left-4 z-20 w-80 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-teal-500/20 p-4 font-outfit space-y-3">
+          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Directions Planner</span>
+            <div className="flex items-center gap-1.5">
+              {directions && (
+                <span className="text-[10px] bg-teal-500/10 text-teal-700 px-2 py-0.5 rounded-full font-bold">
+                  {directions.routes[0].legs[0].distance.text} ({directions.routes[0].legs[0].duration.text})
+                </span>
+              )}
+              <button
+                onClick={() => setShowPlanner(false)}
+                title="Hide Directions Planner"
+                className="p-1 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-lg transition"
               >
-                {lots.map(lot => (
-                  <option key={lot._id} value={lot.name}>{lot.name}</option>
-                ))}
-                {lots.length === 0 && <option>No lots available</option>}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                <ChevronDown className="w-3.5 h-3.5" />
+                <MoreVertical className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {/* vertical dots/icons side bar */}
+            <div className="flex flex-col items-center gap-1 self-stretch py-2 shrink-0">
+              <div className="w-3.5 h-3.5 rounded-full border-2 border-blue-500 flex items-center justify-center bg-white">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+              </div>
+              <div className="w-0.5 flex-1 border-l-2 border-dotted border-gray-300" />
+              <MapPin className="w-3.5 h-3.5 text-red-500" />
+            </div>
+
+            {/* inputs column */}
+            <div className="flex-1 space-y-2">
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={startInput}
+                  onChange={(e) => setStartInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleStartSearch()}
+                  onBlur={() => handleStartSearch()}
+                  placeholder="Choose starting point..."
+                  className="w-full text-xs font-semibold pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:bg-white transition"
+                />
+                <Search className="absolute left-2.5 w-3.5 h-3.5 text-gray-400" />
+              </div>
+
+              <div className="relative">
+                <select
+                  value={destInput}
+                  onChange={(e) => handleDestSelect(e.target.value)}
+                  className="w-full text-xs font-semibold pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-red-500 focus:bg-white transition appearance-none"
+                >
+                  {lots.map(lot => (
+                    <option key={lot._id} value={lot.name}>{lot.name}</option>
+                  ))}
+                  {lots.length === 0 && <option>No lots available</option>}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </div>
               </div>
             </div>
+
+            {/* Swapping button */}
+            <button
+              onClick={handleSwap}
+              title="Swap starting point and destination"
+              className="p-2 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-xl border border-gray-200 transition self-center shrink-0"
+            >
+              <ArrowUpDown className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          {/* Swapping button */}
-          <button
-            onClick={handleSwap}
-            title="Swap starting point and destination"
-            className="p-2 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-xl border border-gray-200 transition self-center shrink-0"
-          >
-            <ArrowUpDown className="w-3.5 h-3.5" />
-          </button>
+          {/* Quick action buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => { setStartInput('Your location'); setStartCoords(userPos); }}
+              className="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-bold rounded-lg border border-blue-100 transition"
+            >
+              <Navigation className="w-3 h-3 fill-current rotate-45" />
+              Your Location
+            </button>
+            <button
+              onClick={() => { setStartInput('Manaoag Church'); geocodeAddress('Manaoag Church', true); }}
+              className="flex-1 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-[10px] font-bold rounded-lg border border-gray-200 transition"
+            >
+              Manaoag Church
+            </button>
+          </div>
         </div>
-
-        {/* Quick action buttons */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => { setStartInput('Your location'); setStartCoords(userPos); }}
-            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-bold rounded-lg border border-blue-100 transition"
-          >
-            <Navigation className="w-3 h-3 fill-current rotate-45" />
-            Your Location
-          </button>
-          <button
-            onClick={() => { setStartInput('Manaoag Church'); geocodeAddress('Manaoag Church', true); }}
-            className="flex-1 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-[10px] font-bold rounded-lg border border-gray-200 transition"
-          >
-            Manaoag Church
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Premium Floating Navigation & Perspective HUD Panel */}
       <div className="absolute bottom-6 right-16 z-10 flex flex-col gap-3">
