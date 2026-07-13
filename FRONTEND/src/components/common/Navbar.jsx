@@ -43,10 +43,14 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
+              // TODO: Login button must be removed. Commented out as requested.
+              /*
               <Link to="/admin/login" className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 transition px-4 py-2 rounded-xl text-white font-bold border border-white/10">
                 <User className="w-4 h-4" />
                 Login
               </Link>
+              */
+              null
             )}
           </div>
 
@@ -131,6 +135,8 @@ const Navbar = () => {
                 <ChevronRight className="w-4 h-4 text-teal-500 group-hover:translate-x-0.5 transition-transform" />
               </Link>
             ) : (
+              // TODO: Login button must be removed. Commented out as requested.
+              /*
               <Link 
                 to="/admin/login" 
                 className="flex items-center justify-between p-3.5 rounded-2xl hover:bg-teal-800/40 transition text-teal-100 hover:text-white group border border-transparent hover:border-teal-800/30"
@@ -142,6 +148,8 @@ const Navbar = () => {
                 </div>
                 <ChevronRight className="w-4 h-4 text-teal-500 group-hover:translate-x-0.5 transition-transform" />
               </Link>
+              */
+              null
             )}
           </nav>
         </div>
