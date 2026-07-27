@@ -114,6 +114,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
               Available Now
             </label>
             
+            {/*
             <select
               value={selectedSlotType}
               onChange={(e) => setSelectedSlotType(e.target.value)}
@@ -125,6 +126,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
               <option value="motorcycle">Motorcycle</option>
               <option value="ev">EV</option>
             </select>
+            */}
 
             <select
               value={sortBy}
