@@ -20,7 +20,18 @@ const ParkingSearchPage = ({ isTab = false }) => {
   }, [isTab, isAuthenticated, navigate]);
   */
 
-  const { lots, loading } = useParkingLots();
+  const { lots: allLots, loading } = useParkingLots();
+
+  // Commented out: Manaoag Church Lot and Manaoag Public Market Lot (not totally removed, just commented out in UI view)
+  /*
+  // Commented out lots:
+  // - Manaoag Church Lot
+  // - Manaoag Public Market Lot
+  */
+  const lots = useMemo(() => {
+    return allLots.filter(lot => lot.name === 'LCC Pay Parking');
+  }, [allLots]);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [availableOnly, setAvailableOnly] = useState(false);
   const [selectedSlotType, setSelectedSlotType] = useState('regular');
