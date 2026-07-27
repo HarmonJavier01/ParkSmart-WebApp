@@ -14,7 +14,7 @@ import useAuth from '../../hooks/useAuth.js';
 
 const menuItems = [
   { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/admin/lots', label: 'Lots', icon: MapPin },
+  { path: '/admin/lots', label: 'Parking', icon: MapPin },
   { path: '/admin/monitor', label: 'Monitor', icon: Monitor },
   // TODO: Reservations must be removed. Route commented out.
   // { path: '/admin/reservations', label: 'Reservations', icon: CalendarCheck },

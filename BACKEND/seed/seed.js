@@ -33,10 +33,55 @@ const seedDatabase = async () => {
     console.log('Cleared existing data');
 
     const usersData = await loadJSON('users.json');
-    const lotsData = await loadJSON('lots.json');
-    const slotsData = await loadJSON('slots.json');
-    const reservationsData = await loadJSON('reservations.json');
-    const reviewsData = await loadJSON('reviews.json');
+    let lotsData = await loadJSON('lots.json');
+    let slotsData = await loadJSON('slots.json');
+    let reservationsData = await loadJSON('reservations.json');
+    let reviewsData = await loadJSON('reviews.json');
+
+    // Commented out: Manaoag Church Lot and Manaoag Public Market Lot.
+    // We filter the loaded array to only include 'LCC Pay Parking'.
+    /*
+    // Manaoag Church Lot:
+    {
+      "_id": "6648a1b2c3d4e5f6a7b8c9d0",
+      "name": "Manaoag Church Lot",
+      "address": "Rizal Street, Manaoag, Pangasinan",
+      "lat": 15.9766,
+      "lng": 120.4869,
+      "totalSlots": 10,
+      "ratePerHour": 20,
+      "operatingHours": { "open": "05:00", "close": "21:00" },
+      "isActive": true,
+      "imageUrl": "/images/church_lot.png",
+      "images": [
+        "/images/church_lot.png"
+      ],
+      "rating": 5.0,
+      "ratingCount": 0
+    }
+    // Manaoag Public Market Lot:
+    {
+      "_id": "6648a1b2c3d4e5f6a7b8c9d1",
+      "name": "Manaoag Public Market Lot",
+      "address": "Market Road, Manaoag, Pangasinan",
+      "lat": 15.978,
+      "lng": 120.4885,
+      "totalSlots": 10,
+      "ratePerHour": 15,
+      "operatingHours": { "open": "06:00", "close": "19:00" },
+      "isActive": true,
+      "imageUrl": "/images/market_lot.png",
+      "images": [
+        "/images/market_lot.png"
+      ],
+      "rating": 5.0,
+      "ratingCount": 0
+    }
+    */
+    lotsData = lotsData.filter(lot => lot.name === 'LCC Pay Parking');
+    slotsData = slotsData.filter(slot => slot.lotId === '6648a1b2c3d4e5f6a7b8c9d2');
+    reservationsData = reservationsData.filter(res => res.lotId === '6648a1b2c3d4e5f6a7b8c9d2');
+    reviewsData = reviewsData.filter(rev => rev.lotId === '6648a1b2c3d4e5f6a7b8c9d2');
 
     await User.create(usersData);
     console.log(`Seeded ${usersData.length} users`);

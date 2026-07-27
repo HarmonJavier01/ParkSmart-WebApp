@@ -4,7 +4,7 @@ import InputField from '../../components/forms/InputField.jsx';
 import SelectField from '../../components/forms/SelectField.jsx';
 
 const SettingsPage = () => {
-  const [rates, setRates] = useState({ lot1: 20, lot2: 15 });
+  const [rates, setRates] = useState({ lot1: 20, lot2: 15, lot3: 25 });
   const [notifications, setNotifications] = useState({ email: true, sms: false });
   const [smtp, setSmtp] = useState({ host: '', port: '', user: '', pass: '' });
   const [admins, setAdmins] = useState([
@@ -31,6 +31,7 @@ const SettingsPage = () => {
           <h2 className="text-lg font-bold">Parking Rates</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
+          {/*
           <InputField
             label="Manaoag Church Lot (per hour)"
             type="number"
@@ -42,6 +43,13 @@ const SettingsPage = () => {
             type="number"
             value={rates.lot2}
             onChange={(e) => setRates({ ...rates, lot2: e.target.value })}
+          />
+          */}
+          <InputField
+            label="LCC Pay Parking (per hour)"
+            type="number"
+            value={rates.lot3}
+            onChange={(e) => setRates({ ...rates, lot3: e.target.value })}
           />
         </div>
         <button onClick={handleSaveRates} className="mt-4 btn-primary text-sm flex items-center gap-2">
