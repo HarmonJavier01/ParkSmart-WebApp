@@ -92,6 +92,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
         {/* Sidebar */}
         <div className="lg:col-span-1 flex flex-col gap-4 h-full overflow-hidden">
+          {/*
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
             <input
@@ -114,7 +115,6 @@ const ParkingSearchPage = ({ isTab = false }) => {
               Available Now
             </label>
             
-            {/*
             <select
               value={selectedSlotType}
               onChange={(e) => setSelectedSlotType(e.target.value)}
@@ -126,7 +126,6 @@ const ParkingSearchPage = ({ isTab = false }) => {
               <option value="motorcycle">Motorcycle</option>
               <option value="ev">EV</option>
             </select>
-            */}
 
             <select
               value={sortBy}
@@ -137,6 +136,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
               <option value="availability">Sort by Avail</option>
             </select>
           </div>
+          */}
 
           <div className="flex-1 overflow-y-auto space-y-4 pr-1">
             {filteredLots.map((lot) => (
