@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import dns from 'dns';
+
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 import User from '../models/User.js';
 import ParkingLot from '../models/ParkingLot.js';
