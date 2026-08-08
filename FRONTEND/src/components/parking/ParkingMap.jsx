@@ -434,10 +434,10 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912
             is3D ? 'text-parking-primary border-parking-primary/30 bg-teal-50' : 'text-gray-600 hover:text-gray-800'
           }`}
         >
-          <Eye className="w-5 h-5" />
+          {/* <Eye className="w-5 h-5" />
           <span className="absolute -top-1 -right-1 text-[8px] font-bold px-1 py-0.5 rounded-full bg-teal-500 text-white leading-none">
             {is3D ? '3D' : '2D'}
-          </span>
+          </span> */}
         </button>
 
         {/* Dynamic Orientation Compass Navigation button */}
