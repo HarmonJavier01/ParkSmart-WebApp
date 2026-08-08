@@ -1,8 +1,9 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
-import { GoogleMap, Marker, Circle, useJsApiLoader, DirectionsRenderer } from '@react-google-maps/api';
-import { Compass, Navigation, Eye, MapPin, Car } from 'lucide-react';
+import { GoogleMap, Marker, Circle, useJsApiLoader, DirectionsRenderer, Polygon } from '@react-google-maps/api';
+import { Compass, Navigation, Eye, MapPin, Car, Layers } from 'lucide-react';
 import LotMarker from './LotMarker.jsx';
 import SlotMarker from './SlotMarker.jsx';
+import { manaoagBoundary } from '../../constants/manaoagBoundary.js';
 
 const containerStyle = {
   width: '100%',
@@ -25,7 +26,7 @@ const getSlotCoordinates = (lot, index, totalSlots) => {
   let latSpacing = 0.000006;
   let lngSpacing = 0.000018;
 
-  if (lot.name && lot.name.includes("Los Caballeros")) {
+  if (lot.name && (lot.name.includes("Los Caballeros") || lot.name.includes("LCC"))) {
     // Los Caballeros is a diagonal line along Milo St (North-West to South-East)
     latSpacing = -0.000007;
     lngSpacing = 0.000014;
@@ -48,7 +49,7 @@ const getSlotCoordinates = (lot, index, totalSlots) => {
   };
 };
 
-const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
+const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY
   });
@@ -58,6 +59,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
   const [directions, setDirections] = useState(null);
   const [isNavigating, setIsNavigating] = useState(false);
   const [is3D, setIs3D] = useState(false);
+  const [mapTypeId, setMapTypeId] = useState('hybrid');
   
   const watchIdRef = useRef(null);
 
@@ -82,7 +84,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
   // Get active lot for directions destination
   const activeLot = lots.length === 1 ? lots[0] : lots.find(l => l._id === hoveredLotId);
   const destination = activeLot ? { lat: activeLot.lat, lng: activeLot.lng } : null;
-  const origin = userPos || (destination ? { lat: 15.9766, lng: 120.4869 } : null);
+  const origin = userPos || (destination ? { lat: 16.0446, lng: 120.4912 } : null);
 
   useEffect(() => {
     if (!isLoaded || !origin || !destination) {
@@ -215,6 +217,13 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
     }
   };
 
+  // Toggle between Roadmap, Terrain, and Hybrid map types
+  const toggleMapType = () => {
+    if (mapTypeId === 'roadmap') setMapTypeId('terrain');
+    else if (mapTypeId === 'terrain') setMapTypeId('hybrid');
+    else setMapTypeId('roadmap');
+  };
+
   // Manual 3D Tilt Toggle
   const toggle3D = () => {
     if (!map) return;
@@ -250,6 +259,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
         zoom={zoom}
         onLoad={onLoad}
         onUnmount={onUnmount}
+        mapTypeId={mapTypeId}
         options={{
           disableDefaultUI: false,
           zoomControl: true,
@@ -268,6 +278,21 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
           ]
         }}
       >
+        {/* Draw the administrative boundary polygon outline of Manaoag, Pangasinan */}
+        {manaoagBoundary && manaoagBoundary.length > 0 && (
+          <Polygon
+            paths={manaoagBoundary}
+            options={{
+              strokeColor: '#0f766e',
+              strokeOpacity: 0.8,
+              strokeWeight: 3.5,
+              fillColor: '#0f766e',
+              fillOpacity: 0.06,
+              clickable: false,
+              zIndex: 1
+            }}
+          />
+        )}
         {/* Draw circle boundary scope for every parking lot on the map */}
         {lots.map((lot) => (
           <Circle
@@ -389,6 +414,18 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 15.9766, lng: 120.4869
 
       {/* Premium Floating Navigation & Perspective HUD Panel */}
       <div className="absolute bottom-6 right-16 z-10 flex flex-col gap-3">
+        {/* Toggle Map Type button */}
+        <button
+          onClick={toggleMapType}
+          title="Change Map Style (Roadmap / Terrain / Hybrid)"
+          className="relative w-12 h-12 bg-white/95 backdrop-blur shadow-lg border border-gray-100 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 text-gray-600 hover:text-gray-800"
+        >
+          <Layers className="w-5 h-5" />
+          <span className="absolute -top-1.5 -right-1.5 text-[7px] font-extrabold px-1 py-0.5 rounded-full bg-teal-600 text-white uppercase tracking-tighter leading-none scale-90">
+            {mapTypeId === 'hybrid' ? 'Sat' : mapTypeId === 'terrain' ? 'Terr' : 'Map'}
+          </span>
+        </button>
+
         {/* Toggle 2D / 3D Tilt button */}
         <button
           onClick={toggle3D}
