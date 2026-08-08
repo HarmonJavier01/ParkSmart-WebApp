@@ -38,7 +38,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
   const [sortBy, setSortBy] = useState('distance');
   const [hoveredLotId, setHoveredLotId] = useState(null);
 
-  const [mapCenter, setMapCenter] = useState({ lat: 16.0446, lng: 120.4912 });
+  const [mapCenter, setMapCenter] = useState({ lat: 16.0450924, lng: 120.4909147 });
   const [searchedPlace, setSearchedPlace] = useState(null);
 
   // Update map center when a specific lot is searched and found

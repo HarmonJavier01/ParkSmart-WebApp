@@ -74,7 +74,7 @@ const getRouteMidpoint = (directionsResult) => {
   };
 };
 
-const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
+const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4909147 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY
   });
@@ -109,7 +109,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912
   // Get active lot for directions destination
   const activeLot = lots.length === 1 ? lots[0] : lots.find(l => l._id === hoveredLotId);
   const destination = activeLot ? { lat: activeLot.lat, lng: activeLot.lng } : null;
-  const origin = userPos || (destination ? { lat: 16.0446, lng: 120.4912 } : null);
+  const origin = userPos || (destination ? { lat: 16.0450924, lng: 120.4909147 } : null);
 
   useEffect(() => {
     if (!isLoaded || !origin || !destination) {
