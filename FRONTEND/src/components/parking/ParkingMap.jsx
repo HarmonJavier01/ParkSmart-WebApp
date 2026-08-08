@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
-import { GoogleMap, Marker, Circle, useJsApiLoader, DirectionsRenderer, Polygon } from '@react-google-maps/api';
+import { GoogleMap, Marker, Circle, useJsApiLoader, DirectionsRenderer, Polygon, InfoWindow } from '@react-google-maps/api';
 import { Compass, Navigation, Eye, MapPin, Car, Layers } from 'lucide-react';
 import LotMarker from './LotMarker.jsx';
 import SlotMarker from './SlotMarker.jsx';
@@ -46,6 +46,31 @@ const getSlotCoordinates = (lot, index, totalSlots) => {
   return {
     lat: lot.lat + startLatOffset + (index * latSpacing),
     lng: lot.lng + startLngOffset + (index * lngSpacing)
+  };
+};
+
+// Helper to find the step that is roughly halfway along the route's total distance
+const getRouteMidpoint = (directionsResult) => {
+  if (!directionsResult || !directionsResult.routes || !directionsResult.routes[0]) return null;
+  const route = directionsResult.routes[0];
+  const leg = route.legs[0];
+  if (!leg || !leg.steps || leg.steps.length === 0) return null;
+  
+  const totalDistance = leg.distance.value; // in meters
+  let cumulativeDistance = 0;
+  let targetStep = leg.steps[0];
+  
+  for (const step of leg.steps) {
+    cumulativeDistance += step.distance.value;
+    if (cumulativeDistance >= totalDistance / 2) {
+      targetStep = step;
+      break;
+    }
+  }
+  
+  return {
+    lat: targetStep.start_location.lat(),
+    lng: targetStep.start_location.lng()
   };
 };
 
@@ -348,28 +373,60 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912
 
         {/* User Geolocation Pulse Marker */}
         {userPos && (
-          <Marker
-            position={userPos}
-            icon={{
-              url: userBlueDotIcon,
-              scaledSize: { width: 34, height: 34 },
-              anchor: new window.google.maps.Point(17, 17)
-            }}
-          />
+          <>
+            <Marker
+              position={userPos}
+              icon={{
+                url: userBlueDotIcon,
+                scaledSize: { width: 34, height: 34 },
+                anchor: new window.google.maps.Point(17, 17)
+              }}
+            />
+            {isNavigating && (
+              <InfoWindow
+                position={userPos}
+                options={{
+                  pixelOffset: new window.google.maps.Size(0, -20),
+                  disableAutoPan: true
+                }}
+              >
+                <div className="px-2 py-0.5 font-outfit text-[10px] font-bold text-gray-700 bg-white rounded-md shadow-sm border border-gray-100">
+                  Your location
+                </div>
+              </InfoWindow>
+            )}
+          </>
         )}
 
         {isNavigating && directions && (
-          <DirectionsRenderer
-            directions={directions}
-            options={{
-              polylineOptions: {
-                strokeColor: '#1a73e8', // Bright, beautiful Google Maps blue route polyline
-                strokeOpacity: 0.85,
-                strokeWeight: 6,
-              },
-              suppressMarkers: true, // Keep our custom lot/slots markers
-            }}
-          />
+          <>
+            <DirectionsRenderer
+              directions={directions}
+              options={{
+                polylineOptions: {
+                  strokeColor: '#1a73e8', // Bright, beautiful Google Maps blue route polyline
+                  strokeOpacity: 0.85,
+                  strokeWeight: 6,
+                },
+                suppressMarkers: true, // Keep our custom lot/slots markers
+              }}
+            />
+            {getRouteMidpoint(directions) && (
+              <InfoWindow
+                position={getRouteMidpoint(directions)}
+                options={{
+                  pixelOffset: new window.google.maps.Size(0, -10),
+                  disableAutoPan: true
+                }}
+              >
+                <div className="bg-white px-2.5 py-1.5 rounded-lg shadow-md border border-gray-100 flex items-center gap-1.5 font-outfit text-xs font-bold text-gray-800">
+                  <Car className="w-3.5 h-3.5 text-blue-600 fill-current" />
+                  <span>{directions.routes[0].legs[0].duration.text}</span>
+                  <span className="text-[10px] text-gray-400 font-semibold">• {directions.routes[0].legs[0].distance.text}</span>
+                </div>
+              </InfoWindow>
+            )}
+          </>
         )}
       </GoogleMap>
 
