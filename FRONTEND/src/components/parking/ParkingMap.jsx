@@ -358,12 +358,12 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912
           />
         )}
 
-        {directions && (
+        {isNavigating && directions && (
           <DirectionsRenderer
             directions={directions}
             options={{
               polylineOptions: {
-                strokeColor: '#3b82f6', // Bright, beautiful blue route polyline
+                strokeColor: '#1a73e8', // Bright, beautiful Google Maps blue route polyline
                 strokeOpacity: 0.85,
                 strokeWeight: 6,
               },
@@ -373,8 +373,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912
         )}
       </GoogleMap>
 
-      {/* Floating Directions Route Info Panel */}
-      {directions && (
+      {isNavigating && directions && (
         <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-teal-500/20 flex flex-col gap-3 animate-fade-in font-outfit w-72">
           {/* Mins and Km header */}
           <div className="flex items-center gap-3 border-b border-gray-100 pb-2">
