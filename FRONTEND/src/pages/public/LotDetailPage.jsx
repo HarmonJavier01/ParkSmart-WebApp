@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   MapPin, Clock, Banknote, ArrowLeft, Star, 
-  Bookmark, Map, Smartphone, Heart, 
+  Bookmark, Map, Heart, 
   Camera, ThumbsUp, X, ChevronLeft, ChevronRight,
   MessageSquare, CheckCircle, Info, ExternalLink
 } from 'lucide-react';
@@ -341,7 +341,7 @@ const LotDetailPage = () => {
               {activeTab === 'overview' && (
                 <>
                   {/* Quick Action Buttons */}
-                  <div className="grid grid-cols-4 gap-1.5 text-center bg-gray-50 p-3 rounded-2xl border border-gray-100">
+                  <div className="grid grid-cols-3 gap-1.5 text-center bg-gray-50 p-3 rounded-2xl border border-gray-100">
                     <button 
                       onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${lot?.lat},${lot?.lng}`, '_blank')} 
                       className="flex flex-col items-center gap-1 group"
@@ -368,15 +368,6 @@ const LotDetailPage = () => {
                         <MapPin className="w-4 h-4" />
                       </div>
                       <span className="text-[10px] font-bold text-gray-500 group-hover:text-teal-600">Nearby</span>
-                    </button>
-                    <button 
-                      onClick={handleSendPhone} 
-                      className="flex flex-col items-center gap-1 group"
-                    >
-                      <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center transition group-hover:scale-105 active:scale-95">
-                        <Smartphone className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-teal-600">Send phone</span>
                     </button>
                   </div>
 
