@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  MapPin, Clock, Banknote, ArrowLeft, Star, 
-  Bookmark, Map, Heart, 
+  MapPin, Clock, Banknote, ArrowLeft, Star, Heart, 
   Camera, ThumbsUp, X, ChevronLeft, ChevronRight,
   MessageSquare, CheckCircle, Info, ExternalLink
 } from 'lucide-react';
@@ -48,41 +47,7 @@ const LotDetailPage = () => {
   // Notifications
   const [toastMessage, setToastMessage] = useState('');
 
-  const [isSaved, setIsSaved] = useState(() => {
-    const saved = localStorage.getItem(`saved_lot_${lotId}`);
-    return saved === 'true';
-  });
 
-  const handleSaveToggle = () => {
-    const nextSaved = !isSaved;
-    setIsSaved(nextSaved);
-    localStorage.setItem(`saved_lot_${lotId}`, String(nextSaved));
-    showToast(nextSaved ? 'Saved to bookmarks!' : 'Removed from bookmarks!');
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: lot?.name || 'ParkSmart Parking Lot',
-          text: `Check out available parking at ${lot?.name || 'ParkSmart'} in Manaoag!`,
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      showToast('Link copied to clipboard!');
-    }
-  };
-
-  const handleSendPhone = () => {
-    const phone = prompt("Enter your mobile number:");
-    if (phone) {
-      showToast(`Parking details sent to ${phone}!`);
-    }
-  };
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -340,36 +305,7 @@ const LotDetailPage = () => {
               {/* --- OVERVIEW TAB --- */}
               {activeTab === 'overview' && (
                 <>
-                  {/* Quick Action Buttons */}
-                  <div className="grid grid-cols-3 gap-1.5 text-center bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                    <button 
-                      onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${lot?.lat},${lot?.lng}`, '_blank')} 
-                      className="flex flex-col items-center gap-1 group"
-                    >
-                      <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center transition group-hover:scale-105 active:scale-95">
-                        <Map className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-teal-600">Directions</span>
-                    </button>
-                    <button 
-                      onClick={handleSaveToggle} 
-                      className="flex flex-col items-center gap-1 group"
-                    >
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center transition group-hover:scale-105 active:scale-95 ${isSaved ? 'bg-teal-100/70 text-teal-600' : 'bg-teal-50 text-teal-600'}`}>
-                        <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-teal-600 text-teal-600' : ''}`} />
-                      </div>
-                      <span className={`text-[10px] font-bold ${isSaved ? 'text-teal-600' : 'text-gray-500 group-hover:text-teal-600'}`}>Save</span>
-                    </button>
-                    <button 
-                      onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=tourist+attractions+near=${lot?.lat},${lot?.lng}`, '_blank')} 
-                      className="flex flex-col items-center gap-1 group"
-                    >
-                      <div className="w-9 h-9 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center transition group-hover:scale-105 active:scale-95">
-                        <MapPin className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-bold text-gray-500 group-hover:text-teal-600">Nearby</span>
-                    </button>
-                  </div>
+
 
                   {/* Informational list */}
                   <div className="space-y-4">
