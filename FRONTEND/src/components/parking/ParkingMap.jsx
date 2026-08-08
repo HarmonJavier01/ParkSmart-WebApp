@@ -461,7 +461,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912
               </div>
               <div className="truncate">
                 <span className="text-[8px] text-gray-400 block font-bold uppercase tracking-wider">Destination</span>
-                {activeLot?.name || 'Parking Lot'}
+                {activeLot ? activeLot.address.split(' (')[0] : 'Milo St, Manaoag, Pangasinan'}
               </div>
             </div>
           </div>
