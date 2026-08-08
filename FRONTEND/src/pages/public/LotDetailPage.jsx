@@ -448,36 +448,7 @@ const LotDetailPage = () => {
               {/* --- REVIEWS TAB --- */}
               {activeTab === 'reviews' && (
                 <div className="space-y-6">
-                  {/* Reviews actions header */}
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm text-gray-500 font-bold">Sort by:</span>
-                      <select 
-                        value={sortBy} 
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="text-xs font-bold text-teal-600 bg-teal-50 border border-teal-100 rounded-lg px-2.5 py-1.5 focus:outline-none"
-                      >
-                        <option value="newest">Newest</option>
-                        <option value="highest">Highest Rating</option>
-                        <option value="lowest">Lowest Rating</option>
-                      </select>
-                    </div>
-                    
-                    <button
-                      onClick={() => {
-                        if (!isAuthenticated) {
-                          showToast('Please log in to write a review');
-                          navigate('/account');
-                        } else {
-                          setShowReviewModal(true);
-                        }
-                      }}
-                      className="text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white px-3 py-2 rounded-xl transition flex items-center gap-1 shrink-0"
-                    >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      Add Review
-                    </button>
-                  </div>
+                  {/* Reviews actions header removed as requested */}
 
                   {/* Reviews List */}
                   {reviewsLoading ? (
