@@ -427,18 +427,18 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0446, lng: 120.4912
         </button>
 
         {/* Toggle 2D / 3D Tilt button */}
-        <button
+        {/* <button
           onClick={toggle3D}
           title="Toggle 2D / 3D Tilt View"
           className={`w-12 h-12 bg-white/95 backdrop-blur shadow-lg border border-gray-100 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 ${
             is3D ? 'text-parking-primary border-parking-primary/30 bg-teal-50' : 'text-gray-600 hover:text-gray-800'
           }`}
         >
-          {/* <Eye className="w-5 h-5" />
+          <Eye className="w-5 h-5" />
           <span className="absolute -top-1 -right-1 text-[8px] font-bold px-1 py-0.5 rounded-full bg-teal-500 text-white leading-none">
             {is3D ? '3D' : '2D'}
-          </span> */}
-        </button>
+          </span>
+        </button> */}
 
         {/* Dynamic Orientation Compass Navigation button */}
         <button
