@@ -27,6 +27,8 @@ const Navbar = () => {
             <Link to="/parking" className="hover:text-teal-200 transition">Find Parking</Link>
             {isAuthenticated ? (
               <>
+                {/* Dashboard, Profile, and Logout commented out as requested */}
+                {/*
                 <Link to="/admin" className="hover:text-teal-200 transition">Dashboard</Link>
                 <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/10 border border-white/5 shadow-xs">
                   <div className="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-300 font-extrabold text-xs border border-teal-400/20">
@@ -41,6 +43,7 @@ const Navbar = () => {
                   <LogOut className="w-3.5 h-3.5" />
                   Logout
                 </button>
+                */}
               </>
             ) : (
               // TODO: Login button must be removed. Commented out as requested.
@@ -93,8 +96,8 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* User Profile Card inside mobile drawer */}
-          {isAuthenticated && user && (
+          {/* User Profile Card inside mobile drawer - Commented out */}
+          {/* {isAuthenticated && user && (
             <div className="mt-6 p-4 rounded-2xl bg-teal-800/30 border border-teal-800/40 flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-300 font-bold border border-teal-400/30 text-sm">
                 {user.name.charAt(0).toUpperCase()}
@@ -106,7 +109,7 @@ const Navbar = () => {
                 </span>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Drawer Navigation Links */}
           <nav className="mt-8 space-y-3 font-semibold">
@@ -122,7 +125,8 @@ const Navbar = () => {
               <ChevronRight className="w-4 h-4 text-teal-500 group-hover:translate-x-0.5 transition-transform" />
             </Link>
 
-            {isAuthenticated ? (
+            {/* Dashboard link commented out */}
+            {/* {isAuthenticated ? (
               <Link 
                 to="/admin" 
                 className="flex items-center justify-between p-3.5 rounded-2xl hover:bg-teal-800/40 transition text-teal-100 hover:text-white group border border-transparent hover:border-teal-800/30"
@@ -134,28 +138,12 @@ const Navbar = () => {
                 </div>
                 <ChevronRight className="w-4 h-4 text-teal-500 group-hover:translate-x-0.5 transition-transform" />
               </Link>
-            ) : (
-              // TODO: Login button must be removed. Commented out as requested.
-              /*
-              <Link 
-                to="/admin/login" 
-                className="flex items-center justify-between p-3.5 rounded-2xl hover:bg-teal-800/40 transition text-teal-100 hover:text-white group border border-transparent hover:border-teal-800/30"
-                onClick={() => setMobileOpen(false)}
-              >
-                <div className="flex items-center gap-3">
-                  <User className="w-5 h-5 text-teal-400 group-hover:scale-110 transition-transform" />
-                  <span>Admin/Operator Login</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-teal-500 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              */
-              null
-            )}
+            ) : null} */}
           </nav>
         </div>
 
-        {/* Drawer Footer Actions */}
-        {isAuthenticated && (
+        {/* Drawer Footer Actions - Commented out */}
+        {/* {isAuthenticated && (
           <div className="pt-6 border-t border-teal-800/40">
             <button 
               onClick={() => { handleLogout(); setMobileOpen(false); }} 
@@ -165,7 +153,7 @@ const Navbar = () => {
               <span>Logout</span>
             </button>
           </div>
-        )}
+        )} */}
       </div>
     </nav>
   );
