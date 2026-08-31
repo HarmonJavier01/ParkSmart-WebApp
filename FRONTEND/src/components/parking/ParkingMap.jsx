@@ -139,6 +139,9 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
         } else {
           console.warn(`error fetching directions: ${status}`);
           setDirections(null);
+          if (status === 'REQUEST_DENIED') {
+            alert(`Google Maps Directions API returned REQUEST_DENIED. Please ensure that the "Directions API" is enabled for your API key in the Google Cloud Console.`);
+          }
         }
       }
     );
@@ -207,11 +210,6 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
       }
 
       setIsNavigating(true);
-
-      if (destination) {
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}&travelmode=driving`;
-        window.open(url, '_blank');
-      }
 
       // 1. Center on user location and watch positions
       watchIdRef.current = navigator.geolocation.watchPosition(
@@ -374,8 +372,6 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
                 if (map) {
                   map.panTo({ lat: lot.lat, lng: lot.lng });
                 }
-                const url = `https://www.google.com/maps/dir/?api=1&destination=${lot.lat},${lot.lng}&travelmode=driving`;
-                window.open(url, '_blank');
               }}
             />
           ))
@@ -537,10 +533,6 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
             onClick={() => {
               const nextShow = !showRoute;
               setShowRoute(nextShow);
-              if (nextShow && destination) {
-                const url = `https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}&travelmode=driving`;
-                window.open(url, '_blank');
-              }
             }}
             title={showRoute ? "Hide Directions" : "Get Directions"}
             className={`relative w-12 h-12 bg-white/95 backdrop-blur shadow-lg border border-gray-100 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 ${
