@@ -129,19 +129,17 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
     const directionsService = new window.google.maps.DirectionsService();
     directionsService.route(
       {
-        origin: new window.google.maps.LatLng(origin.lat, origin.lng),
-        destination: new window.google.maps.LatLng(destination.lat, destination.lng),
+        origin: { lat: parseFloat(origin.lat), lng: parseFloat(origin.lng) },
+        destination: { lat: parseFloat(destination.lat), lng: parseFloat(destination.lng) },
         travelMode: window.google.maps.TravelMode.DRIVING
       },
       (result, status) => {
         if (status === window.google.maps.DirectionsStatus.OK) {
           setDirections(result);
         } else {
-          console.warn(`error fetching directions: ${status}`);
+          console.error(`Directions request failed with status: ${status}`);
           setDirections(null);
-          if (status === 'REQUEST_DENIED') {
-            alert(`Google Maps Directions API returned REQUEST_DENIED. Please ensure that the "Directions API" is enabled for your API key in the Google Cloud Console.`);
-          }
+          alert(`Google Maps Directions failed: ${status}. If it is REQUEST_DENIED, please check if your API key has API restrictions configured in Google Cloud Console.`);
         }
       }
     );
