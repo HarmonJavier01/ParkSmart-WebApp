@@ -3,7 +3,7 @@ import { Marker, InfoWindow } from '@react-google-maps/api';
 import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
 
-const LotMarker = ({ lot, isHovered }) => {
+const LotMarker = ({ lot, isHovered, onGetDirections }) => {
   const navigate = useNavigate();
   const [isLocalHovered, setIsLocalHovered] = useState(false);
   const available = lot.availableSlots || 0;
@@ -83,7 +83,11 @@ const LotMarker = ({ lot, isHovered }) => {
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();
-                    alert(`Routing directions to ${lot.name}...`);
+                    if (onGetDirections) {
+                      onGetDirections();
+                    } else {
+                      alert(`Routing directions to ${lot.name}...`);
+                    }
                   }}
                   className="w-7.5 h-7.5 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center hover:bg-teal-100 transition shadow-sm border border-teal-100/20"
                   title="Directions"

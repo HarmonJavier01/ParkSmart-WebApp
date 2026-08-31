@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { GoogleMap, Marker, Circle, useJsApiLoader, DirectionsRenderer, Polygon, InfoWindow } from '@react-google-maps/api';
-import { Compass, Navigation, Eye, MapPin, Car, Layers } from 'lucide-react';
+import { Compass, Navigation, Eye, MapPin, Car, Layers, X } from 'lucide-react';
 import LotMarker from './LotMarker.jsx';
 import SlotMarker from './SlotMarker.jsx';
 import { manaoagBoundary } from '../../constants/manaoagBoundary.js';
@@ -83,10 +83,19 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
   const [userPos, setUserPos] = useState(null);
   const [directions, setDirections] = useState(null);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [showRoute, setShowRoute] = useState(lots.length === 1);
   const [is3D, setIs3D] = useState(false);
   const [mapTypeId, setMapTypeId] = useState('hybrid');
   
   const watchIdRef = useRef(null);
+
+  useEffect(() => {
+    if (lots.length === 1) {
+      setShowRoute(true);
+    } else {
+      setShowRoute(false);
+    }
+  }, [lots]);
 
   // Fetch user location automatically on mount
   useEffect(() => {
@@ -355,6 +364,12 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
               key={lot._id} 
               lot={lot} 
               isHovered={hoveredLotId === lot._id}
+              onGetDirections={() => {
+                setShowRoute(true);
+                if (map) {
+                  map.panTo({ lat: lot.lat, lng: lot.lng });
+                }
+              }}
             />
           ))
         )}
@@ -398,7 +413,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
           </>
         )}
 
-        {isNavigating && directions && (
+        {(isNavigating || showRoute) && directions && (
           <>
             <DirectionsRenderer
               directions={directions}
@@ -430,21 +445,34 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
         )}
       </GoogleMap>
 
-      {isNavigating && directions && (
+      {(isNavigating || showRoute) && directions && (
         <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-teal-500/20 flex flex-col gap-3 animate-fade-in font-outfit w-72">
           {/* Mins and Km header */}
-          <div className="flex items-center gap-3 border-b border-gray-100 pb-2">
-            <div className="w-9 h-9 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-600 shrink-0">
-              <Car className="w-5 h-5 fill-current" />
+          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-600 shrink-0">
+                <Car className="w-5 h-5 fill-current" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-[#063b31] text-sm leading-tight">
+                  {directions.routes[0].legs[0].duration.text}
+                </h4>
+                <p className="text-xs text-gray-500 font-semibold">
+                  {directions.routes[0].legs[0].distance.text} • Driving Route
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-extrabold text-[#063b31] text-sm leading-tight">
-                {directions.routes[0].legs[0].duration.text}
-              </h4>
-              <p className="text-xs text-gray-500 font-semibold">
-                {directions.routes[0].legs[0].distance.text} • Driving Route
-              </p>
-            </div>
+            {/* Close route button */}
+            <button 
+              onClick={() => {
+                setShowRoute(false);
+                setIsNavigating(false);
+              }}
+              className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition shrink-0"
+              title="Close Directions"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Start and Destination list */}
@@ -495,6 +523,24 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
             {is3D ? '3D' : '2D'}
           </span>
         </button> */}
+
+        {/* Toggle Route Polyline button */}
+        {directions && (
+          <button
+            onClick={() => setShowRoute(!showRoute)}
+            title={showRoute ? "Hide Directions" : "Get Directions"}
+            className={`relative w-12 h-12 bg-white/95 backdrop-blur shadow-lg border border-gray-100 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 ${
+              showRoute ? 'text-blue-600 border-blue-200 bg-blue-50' : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            <Navigation className={`w-5 h-5 ${showRoute ? 'fill-blue-600 text-blue-600' : ''}`} />
+            {!showRoute && (
+              <span className="absolute -top-1.5 -right-1.5 text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-blue-600 text-white leading-none">
+                Go
+              </span>
+            )}
+          </button>
+        )}
 
         {/* Dynamic Orientation Compass Navigation button */}
         <button
