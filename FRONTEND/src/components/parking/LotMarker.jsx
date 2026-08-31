@@ -3,7 +3,7 @@ import { Marker, InfoWindow } from '@react-google-maps/api';
 import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
 
-const LotMarker = ({ lot, isHovered, onGetDirections }) => {
+const LotMarker = ({ lot, isHovered }) => {
   const navigate = useNavigate();
   const [isLocalHovered, setIsLocalHovered] = useState(false);
   const available = lot.availableSlots || 0;
@@ -78,24 +78,8 @@ const LotMarker = ({ lot, isHovered, onGetDirections }) => {
                 </span>
               </div>
 
-              {/* Circle action buttons (Directions & Save) */}
+              {/* Circle action buttons (Save) */}
               <div className="flex items-center gap-1.5 shrink-0">
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (onGetDirections) {
-                      onGetDirections();
-                    } else {
-                      alert(`Routing directions to ${lot.name}...`);
-                    }
-                  }}
-                  className="w-7.5 h-7.5 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center hover:bg-teal-100 transition shadow-sm border border-teal-100/20"
-                  title="Directions"
-                >
-                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                    <path d="M22.43 11.23L12.77 1.57a2.5 2.5 0 00-3.54 0L1.57 9.23a2.5 2.5 0 000 3.54l9.66 9.66c.97.97 2.56.97 3.53 0l7.67-7.66a2.5 2.5 0 000-3.54zM14 14.5V12h-4v3H8.5v-4.5A1.5 1.5 0 0110 9h4V6.5l3.5 3.5-3.5 3.5z"/>
-                  </svg>
-                </button>
                 <button 
                   onClick={(e) => {
                     e.stopPropagation();

@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
-import { GoogleMap, Marker, Circle, useJsApiLoader, DirectionsRenderer, Polygon, InfoWindow } from '@react-google-maps/api';
-import { Compass, Navigation, Eye, MapPin, Car, Layers, X } from 'lucide-react';
+import { GoogleMap, Marker, Circle, useJsApiLoader, Polygon, InfoWindow } from '@react-google-maps/api';
+import { Compass, Navigation, Eye, MapPin, Layers } from 'lucide-react';
 import LotMarker from './LotMarker.jsx';
 import SlotMarker from './SlotMarker.jsx';
 import { manaoagBoundary } from '../../constants/manaoagBoundary.js';
@@ -48,32 +48,6 @@ const getSlotCoordinates = (lot, index, totalSlots) => {
     lng: lot.lng + startLngOffset + (index * lngSpacing)
   };
 };
-
-// Helper to find the step that is roughly halfway along the route's total distance
-const getRouteMidpoint = (directionsResult) => {
-  if (!directionsResult || !directionsResult.routes || !directionsResult.routes[0]) return null;
-  const route = directionsResult.routes[0];
-  const leg = route.legs[0];
-  if (!leg || !leg.steps || leg.steps.length === 0) return null;
-  
-  const totalDistance = leg.distance.value; // in meters
-  let cumulativeDistance = 0;
-  let targetStep = leg.steps[0];
-  
-  for (const step of leg.steps) {
-    cumulativeDistance += step.distance.value;
-    if (cumulativeDistance >= totalDistance / 2) {
-      targetStep = step;
-      break;
-    }
-  }
-  
-  return {
-    lat: targetStep.start_location.lat(),
-    lng: targetStep.start_location.lng()
-  };
-};
-
 const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4909147 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY
@@ -81,21 +55,11 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
 
   const [map, setMap] = useState(null);
   const [userPos, setUserPos] = useState(null);
-  const [directions, setDirections] = useState(null);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [showRoute, setShowRoute] = useState(lots.length === 1);
   const [is3D, setIs3D] = useState(false);
   const [mapTypeId, setMapTypeId] = useState('hybrid');
   
   const watchIdRef = useRef(null);
-
-  useEffect(() => {
-    if (lots.length === 1) {
-      setShowRoute(true);
-    } else {
-      setShowRoute(false);
-    }
-  }, [lots]);
 
   // Fetch user location automatically on mount
   useEffect(() => {
@@ -114,36 +78,6 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
       );
     }
   }, []);
-
-  // Get active lot for directions destination
-  const activeLot = lots.length === 1 ? lots[0] : lots.find(l => l._id === hoveredLotId);
-  const destination = activeLot ? { lat: activeLot.lat, lng: activeLot.lng } : null;
-  const origin = userPos || (destination ? { lat: 16.0450924, lng: 120.4909147 } : null);
-
-  useEffect(() => {
-    if (!isLoaded || !origin || !destination) {
-      setDirections(null);
-      return;
-    }
-
-    const directionsService = new window.google.maps.DirectionsService();
-    directionsService.route(
-      {
-        origin: { lat: parseFloat(origin.lat), lng: parseFloat(origin.lng) },
-        destination: { lat: parseFloat(destination.lat), lng: parseFloat(destination.lng) },
-        travelMode: window.google.maps.TravelMode.DRIVING
-      },
-      (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
-          setDirections(result);
-        } else {
-          console.error(`Directions request failed with status: ${status}`);
-          setDirections(null);
-          alert(`Google Maps Directions failed: ${status}. If it is REQUEST_DENIED, please check if your API key has API restrictions configured in Google Cloud Console.`);
-        }
-      }
-    );
-  }, [isLoaded, origin?.lat, origin?.lng, destination?.lat, destination?.lng]);
 
   // Clean up location tracking on unmount
   useEffect(() => {
@@ -414,88 +348,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
           </>
         )}
 
-        {(isNavigating || showRoute) && directions && (
-          <>
-            <DirectionsRenderer
-              directions={directions}
-              options={{
-                polylineOptions: {
-                  strokeColor: '#1a73e8', // Bright, beautiful Google Maps blue route polyline
-                  strokeOpacity: 0.85,
-                  strokeWeight: 6,
-                },
-                suppressMarkers: true, // Keep our custom lot/slots markers
-              }}
-            />
-            {getRouteMidpoint(directions) && (
-              <InfoWindow
-                position={getRouteMidpoint(directions)}
-                options={{
-                  pixelOffset: new window.google.maps.Size(0, -10),
-                  disableAutoPan: true
-                }}
-              >
-                <div className="bg-white px-2.5 py-1.5 rounded-lg shadow-md border border-gray-100 flex items-center gap-1.5 font-outfit text-xs font-bold text-gray-800">
-                  <Car className="w-3.5 h-3.5 text-blue-600 fill-current" />
-                  <span>{directions.routes[0].legs[0].duration.text}</span>
-                  <span className="text-[10px] text-gray-400 font-semibold">• {directions.routes[0].legs[0].distance.text}</span>
-                </div>
-              </InfoWindow>
-            )}
-          </>
-        )}
       </GoogleMap>
-
-      {(isNavigating || showRoute) && directions && (
-        <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-teal-500/20 flex flex-col gap-3 animate-fade-in font-outfit w-72">
-          {/* Mins and Km header */}
-          <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-teal-500/10 flex items-center justify-center text-teal-600 shrink-0">
-                <Car className="w-5 h-5 fill-current" />
-              </div>
-              <div>
-                <h4 className="font-extrabold text-[#063b31] text-sm leading-tight">
-                  {directions.routes[0].legs[0].duration.text}
-                </h4>
-                <p className="text-xs text-gray-500 font-semibold">
-                  {directions.routes[0].legs[0].distance.text} • Driving Route
-                </p>
-              </div>
-            </div>
-            {/* Close route button */}
-            <button 
-              onClick={() => {
-                setShowRoute(false);
-                setIsNavigating(false);
-              }}
-              className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition shrink-0"
-              title="Close Directions"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Start and Destination list */}
-          <div className="flex gap-2">
-            <div className="flex flex-col items-center gap-1 py-1 shrink-0">
-              <div className="w-2.5 h-2.5 rounded-full border border-blue-500 bg-blue-500" />
-              <div className="w-0.5 flex-grow border-l border-dashed border-gray-300" />
-              <MapPin className="w-3.5 h-3.5 text-red-500" />
-            </div>
-            <div className="flex-1 text-[11px] font-semibold space-y-1 text-gray-600 overflow-hidden">
-              <div className="truncate">
-                <span className="text-[8px] text-gray-400 block font-bold uppercase tracking-wider">Start point</span>
-                {userPos ? 'Your location' : 'Manaoag Center'}
-              </div>
-              <div className="truncate">
-                <span className="text-[8px] text-gray-400 block font-bold uppercase tracking-wider">Destination</span>
-                {activeLot ? activeLot.address.split(' (')[0] : 'Milo St, Manaoag, Pangasinan'}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Premium Floating Navigation & Perspective HUD Panel */}
       <div className="absolute bottom-6 right-16 z-10 flex flex-col gap-3">
@@ -525,26 +378,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
           </span>
         </button> */}
 
-        {/* Toggle Route Polyline button */}
-        {directions && (
-          <button
-            onClick={() => {
-              const nextShow = !showRoute;
-              setShowRoute(nextShow);
-            }}
-            title={showRoute ? "Hide Directions" : "Get Directions"}
-            className={`relative w-12 h-12 bg-white/95 backdrop-blur shadow-lg border border-gray-100 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 ${
-              showRoute ? 'text-blue-600 border-blue-200 bg-blue-50' : 'text-gray-600 hover:text-gray-800'
-            }`}
-          >
-            <Navigation className={`w-5 h-5 ${showRoute ? 'fill-blue-600 text-blue-600' : ''}`} />
-            {!showRoute && (
-              <span className="absolute -top-1.5 -right-1.5 text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-blue-600 text-white leading-none">
-                Go
-              </span>
-            )}
-          </button>
-        )}
+
 
         {/* Dynamic Orientation Compass Navigation button */}
         <button
