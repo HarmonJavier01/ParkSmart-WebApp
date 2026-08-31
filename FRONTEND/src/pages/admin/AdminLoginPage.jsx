@@ -12,7 +12,7 @@ const AdminLoginPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated && (user?.role === 'superadmin' || user?.role === 'lot_operator')) {
+    if (isAuthenticated && user?.role === 'superadmin') {
       navigate('/admin');
     }
   }, [isAuthenticated, user, navigate]);

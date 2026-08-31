@@ -18,9 +18,9 @@ const menuItems = [
   { path: '/admin/monitor', label: 'Monitor', icon: Monitor },
   // TODO: Reservations must be removed. Route commented out.
   // { path: '/admin/reservations', label: 'Reservations', icon: CalendarCheck },
-  { path: '/admin/users', label: 'Users', icon: Users },
+  // { path: '/admin/users', label: 'Users', icon: Users },
   { path: '/admin/reports', label: 'Reports', icon: BarChart3 },
-  { path: '/admin/sensors', label: 'Sensors', icon: Activity },
+  // { path: '/admin/sensors', label: 'Sensors', icon: Activity },
   { path: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 

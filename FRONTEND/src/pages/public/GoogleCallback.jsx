@@ -40,8 +40,8 @@ const GoogleCallback = () => {
         // Log user in using useAuth hook
         login(res.user, res.token);
 
-        // Redirect admins/operators to the admin dashboard, others to account page
-        if (res.user.role === 'superadmin' || res.user.role === 'lot_operator') {
+        // Redirect admins to the admin dashboard, others to account page
+        if (res.user.role === 'superadmin') {
           navigate('/admin');
         } else {
           navigate('/account');

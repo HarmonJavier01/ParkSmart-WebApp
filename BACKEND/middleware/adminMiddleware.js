@@ -3,7 +3,8 @@ export const requireAdmin = (req, res, next) => {
     return res.status(401).json({ message: 'Not authorized' });
   }
 
-  if (!['superadmin', 'lot_operator'].includes(req.user.role)) {
+  const allowedSuperAdmins = ['admin@parksmart.ph', 'apppersonaltesting@gmail.com'];
+  if (req.user.role !== 'superadmin' || !allowedSuperAdmins.includes(req.user.email)) {
     return res.status(403).json({ message: 'Not authorized as admin' });
   }
 

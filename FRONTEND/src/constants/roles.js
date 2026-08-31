@@ -5,7 +5,7 @@ export const ROLES = {
 };
 
 export const isAdmin = (role) => {
-  return role === ROLES.SUPERADMIN || role === ROLES.LOT_OPERATOR;
+  return role === ROLES.SUPERADMIN;
 };
 
 export const isSuperAdmin = (role) => {

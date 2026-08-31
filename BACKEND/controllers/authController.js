@@ -182,7 +182,8 @@ export const adminLogin = async (req, res, next) => {
     const user = await User.findOne({ email }).select('+password');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    if (!['superadmin', 'lot_operator'].includes(user.role)) {
+    const allowedSuperAdmins = ['admin@parksmart.ph', 'apppersonaltesting@gmail.com'];
+    if (user.role !== 'superadmin' || !allowedSuperAdmins.includes(user.email)) {
       return res.status(403).json({ message: 'Not authorized as admin' });
     }
 

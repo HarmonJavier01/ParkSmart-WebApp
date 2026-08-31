@@ -71,9 +71,9 @@ function App() {
                 <Route path="/monitor" element={<MonitorPage />} />
                 {/* TODO: Reservations must be removed. Route commented out. */}
                 {/* <Route path="/reservations" element={<ReservationsAdminPage />} /> */}
-                <Route path="/users" element={<UsersPage />} />
+                {/* <Route path="/users" element={<UsersPage />} /> */}
                 <Route path="/reports" element={<ReportsPage />} />
-                <Route path="/sensors" element={<SensorLogsPage />} />
+                {/* <Route path="/sensors" element={<SensorLogsPage />} /> */}
                 <Route path="/settings" element={<SettingsPage />} />
               </Routes>
             </AdminRoute>
