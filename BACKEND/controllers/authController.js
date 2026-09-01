@@ -145,9 +145,12 @@ export const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select('+password');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    // Email verification check commented out
+    /*
     if (!user.isVerified && !['superadmin', 'lot_operator'].includes(user.role)) {
       return res.status(403).json({ message: 'Please verify your email first.' });
     }
+    */
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
