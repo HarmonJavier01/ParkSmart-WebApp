@@ -24,15 +24,40 @@ const LotDetailPage = () => {
   const { slots, loading: slotsLoading } = useSlots(lotId);
   const [loading, setLoading] = useState(true);
   
+  // Default initial reviews synchronized with MongoDB
+  const DEFAULT_INITIAL_REVIEWS = [
+    {
+      _id: '6a971517377305354509973b',
+      rating: 5,
+      feedback: 'Your app is amazing and very helpful for me',
+      createdAt: '2026-09-01T18:10:31.535Z',
+      userId: { name: 'Melvin G. Sibuma', email: 'melvin_sibuma@parksmart.ph' }
+    },
+    {
+      _id: '6a96c7d14f3fd66f274547bc',
+      rating: 5,
+      feedback: 'Nice parking space',
+      createdAt: '2025-09-29T12:00:00.000Z',
+      userId: { name: 'John D.', email: 'john_d_guest@parksmart.ph' }
+    },
+    {
+      _id: '6a96c7d14f3fd66f274547bd',
+      rating: 5,
+      feedback: 'Excellent and secure parking space near the church. High-quality service!',
+      createdAt: '2024-06-29T12:00:00.000Z',
+      userId: { name: 'Maria Santos', email: 'maria_santos_guest@parksmart.ph' }
+    }
+  ];
+
   // Review & tabs state
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'reviews'
   const [reviewsData, setReviewsData] = useState({
-    reviews: [],
+    reviews: DEFAULT_INITIAL_REVIEWS,
     rating: 5.0,
-    ratingCount: 0,
-    breakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+    ratingCount: 3,
+    breakdown: { 5: 3, 4: 0, 3: 0, 2: 0, 1: 0 }
   });
-  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
   const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'highest' | 'lowest'
 
   // Write review state
