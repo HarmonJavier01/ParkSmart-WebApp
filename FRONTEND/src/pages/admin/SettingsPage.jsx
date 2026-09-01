@@ -24,27 +24,14 @@ const SettingsPage = () => {
     <div className="space-y-8">
       <h1 className="text-2xl font-bold">Settings</h1>
 
-      {/* Parking Rates */}
+      {/* Parking Rates commented out */}
+      {/*
       <div className="card">
         <div className="flex items-center gap-2 mb-4">
           <UserCog className="w-5 h-5 text-parking-primary" />
           <h2 className="text-lg font-bold">Parking Rates</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
-          {/*
-          <InputField
-            label="Manaoag Church Lot (per hour)"
-            type="number"
-            value={rates.lot1}
-            onChange={(e) => setRates({ ...rates, lot1: e.target.value })}
-          />
-          <InputField
-            label="Public Market Lot (per hour)"
-            type="number"
-            value={rates.lot2}
-            onChange={(e) => setRates({ ...rates, lot2: e.target.value })}
-          />
-          */}
           <InputField
             label="LCC Pay Parking (per hour)"
             type="number"
@@ -56,6 +43,7 @@ const SettingsPage = () => {
           <Save className="w-4 h-4" /> Save Rates
         </button>
       </div>
+      */}
 
       {/* Notifications */}
       <div className="card">
