@@ -89,7 +89,7 @@ const MonitorPage = () => {
               <ParkingMap
                 lots={[lot]}
                 slots={slotsMap[lot._id] || []}
-                center={{ lat: lot.lat || 16.0450924, lng: lot.lng || 120.4909147 }}
+                center={{ lat: lot.lat || 16.045175, lng: lot.lng || 120.49120 }}
                 zoom={19}
               />
             </div>

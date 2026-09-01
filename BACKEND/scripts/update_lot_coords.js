@@ -14,8 +14,8 @@ const run = async () => {
       {},
       {
         $set: {
-          lat: 16.045075,
-          lng: 120.49090,
+          lat: 16.045175,
+          lng: 120.49120,
           imageUrl: '/images/IMG20260604134124.jpg',
           images: [
             '/images/IMG20260604134124.jpg',

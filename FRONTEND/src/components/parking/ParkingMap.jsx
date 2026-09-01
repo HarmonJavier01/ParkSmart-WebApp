@@ -30,27 +30,70 @@ const getPolygonCenter = (coords) => {
   return { lat: sum.lat / coords.length, lng: sum.lng / coords.length };
 };
 
-const boundaryCenter = getPolygonCenter(manaoagBoundary) || { lat: 16.045075, lng: 120.49090 };
+// Compound boundary polygon coordinates center
+const boundaryCenter = getPolygonCenter(manaoagBoundary) || { lat: 16.045175, lng: 120.49120 };
+
+// Exact custom GPS layout map matching the physical satellite lot arrangement in the diagram
+const LCC_SLOT_COORDINATES = {
+  // Bottom section: slots 1 to 5 (right column) & slots 6 to 10 (left column)
+  1: { lat: 16.04459, lng: 120.49126 },
+  2: { lat: 16.04464, lng: 120.49126 },
+  3: { lat: 16.04470, lng: 120.49126 },
+  4: { lat: 16.04476, lng: 120.49126 },
+  5: { lat: 16.04482, lng: 120.49126 },
+  6: { lat: 16.04459, lng: 120.49119 },
+  7: { lat: 16.04464, lng: 120.49119 },
+  8: { lat: 16.04470, lng: 120.49119 },
+  9: { lat: 16.04476, lng: 120.49119 },
+  10: { lat: 16.04482, lng: 120.49119 },
+
+  // Middle-south section (south of green roof building): slots 11 to 16
+  11: { lat: 16.04489, lng: 120.49125 },
+  12: { lat: 16.04495, lng: 120.49125 },
+  13: { lat: 16.04501, lng: 120.49125 },
+  14: { lat: 16.04507, lng: 120.49125 },
+  15: { lat: 16.04513, lng: 120.49125 },
+  16: { lat: 16.04519, lng: 120.49125 },
+
+  // Middle-north section (north of green roof building): slots 17 to 18
+  17: { lat: 16.04547, lng: 120.49124 },
+  18: { lat: 16.04554, lng: 120.49124 },
+
+  // Top-left section (north-west driveway): slots 19 to 25
+  19: { lat: 16.04535, lng: 120.49110 },
+  20: { lat: 16.04542, lng: 120.49110 },
+  21: { lat: 16.04548, lng: 120.49110 },
+  22: { lat: 16.04554, lng: 120.49110 },
+  23: { lat: 16.04560, lng: 120.49110 },
+  24: { lat: 16.04566, lng: 120.49110 },
+  25: { lat: 16.04572, lng: 120.49110 }
+};
 
 // Helper to calculate coordinate of each slot inside a parking row line
-const getSlotCoordinates = (lot, index, totalSlots) => {
+const getSlotCoordinates = (lot, slot, index, totalSlots) => {
+  const isLCC = lot?.name && (lot.name.includes("Los Caballeros") || lot.name.includes("LCC"));
+
+  if (isLCC) {
+    let slotNum = index + 1;
+    if (slot?.slotNumber) {
+      const match = String(slot.slotNumber).match(/\d+/);
+      if (match) slotNum = parseInt(match[0], 10);
+    }
+    if (LCC_SLOT_COORDINATES[slotNum]) {
+      return LCC_SLOT_COORDINATES[slotNum];
+    }
+  }
+
   let latSpacing = 0.000006;
   let lngSpacing = 0.000018;
 
-  const isLCC = lot?.name && (lot.name.includes("Los Caballeros") || lot.name.includes("LCC"));
   const baseLat = isLCC ? boundaryCenter.lat : (lot?.lat || boundaryCenter.lat);
   const baseLng = isLCC ? boundaryCenter.lng : (lot?.lng || boundaryCenter.lng);
 
-  if (isLCC) {
-    // Los Caballeros is a diagonal line along Milo St (North-West to South-East) centered inside the boundary box
-    latSpacing = -0.000007;
-    lngSpacing = 0.000014;
-  } else if (lot?.name && lot.name.includes("Church")) {
-    // Church is a line running North to South
+  if (lot?.name && lot.name.includes("Church")) {
     latSpacing = 0.000010;
     lngSpacing = 0.000004;
   } else if (lot?.name && lot.name.includes("Market")) {
-    // Market is running West to East
     latSpacing = 0.000002;
     lngSpacing = 0.000015;
   }
@@ -63,7 +106,7 @@ const getSlotCoordinates = (lot, index, totalSlots) => {
     lng: baseLng + startLngOffset + (index * lngSpacing)
   };
 };
-const ParkingMap = ({ lots, slots = null, center = { lat: 16.045075, lng: 120.49090 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
+const ParkingMap = ({ lots, slots = null, center = { lat: 16.045175, lng: 120.49120 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY
   });
@@ -285,7 +328,7 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.045075, lng: 120.49
             <Circle
               key={`boundary-${lot._id}`}
               center={circleCenter}
-              radius={lots.length === 1 ? 28 : 35} // Centered right on the boundary box
+              radius={lots.length === 1 ? 42 : 50} // Centered right on the boundary box
               options={{
                 strokeColor: '#0d9488',
                 strokeOpacity: 0.7,
@@ -300,12 +343,12 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.045075, lng: 120.49
         })}
 
         {slots && slots.length > 0 ? (
-          // Slot-level detail view: render individual slots as red/green circular markers in a line
+          // Slot-level detail view: render individual slots as red/green circular markers in the custom layout
           slots.map((slot, index) => {
-            const pos = getSlotCoordinates(lots[0], index, slots.length);
+            const pos = getSlotCoordinates(lots[0], slot, index, slots.length);
             return (
               <SlotMarker
-                key={slot._id}
+                key={slot._id || index}
                 slot={slot}
                 position={pos}
               />
