@@ -153,8 +153,7 @@ const LotDetailPage = () => {
 
       showToast(response?.message || 'Review submitted successfully!');
       
-      // Update local reviewsData state immediately so the user sees their new review and star rating right away
-      const newReviewItem = {
+      const newReviewItem = response?.review || {
         _id: 'review_' + Date.now(),
         rating: Number(newRating),
         feedback: newFeedback,
@@ -167,7 +166,7 @@ const LotDetailPage = () => {
 
       setReviewsData(prev => {
         const existingReviews = prev?.reviews || [];
-        const updatedReviews = [newReviewItem, ...existingReviews.filter(r => r.userId?.name !== reviewPayload.guestName)];
+        const updatedReviews = [newReviewItem, ...existingReviews.filter(r => r.userId?.name !== reviewPayload.guestName && r._id !== newReviewItem._id)];
         const total = updatedReviews.length;
         const sum = updatedReviews.reduce((acc, r) => acc + (r.rating || 5), 0);
         const avg = total > 0 ? Math.round((sum / total) * 10) / 10 : 5.0;
@@ -184,6 +183,9 @@ const LotDetailPage = () => {
       setNewRating(5);
       setNewFeedback('');
       setGuestName('');
+
+      // Refresh reviews from MongoDB database
+      fetchReviews();
     } catch (err) {
       console.warn('Review submit caught:', err);
       showToast('Review submitted successfully!');

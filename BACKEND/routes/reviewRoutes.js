@@ -4,6 +4,8 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+router.get('/', getLotReviews);
+router.post('/', createReview);
 router.get('/:lotId', getLotReviews);
 router.post('/:lotId', createReview);
 

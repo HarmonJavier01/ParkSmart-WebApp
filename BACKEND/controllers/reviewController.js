@@ -3,22 +3,23 @@ import Review from '../models/Review.js';
 import ParkingLot from '../models/ParkingLot.js';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
+import { getIO } from '../config/socket.js';
 
 // Get all reviews for a lot with breakdown stats
 export const getLotReviews = async (req, res, next) => {
   try {
-    const { lotId } = req.params;
+    const lotId = req.params.lotId || req.query.lotId;
 
-    if (!lotId || !mongoose.Types.ObjectId.isValid(lotId)) {
-      return res.json({
-        reviews: [],
-        rating: 5.0,
-        ratingCount: 0,
-        breakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
-      });
+    let targetLotId = null;
+    if (lotId && mongoose.Types.ObjectId.isValid(lotId)) {
+      targetLotId = lotId;
+    } else {
+      const defaultLot = await ParkingLot.findOne({});
+      if (defaultLot) targetLotId = defaultLot._id;
     }
 
-    const reviews = await Review.find({ lotId })
+    const query = targetLotId ? { lotId: targetLotId } : {};
+    const reviews = await Review.find(query)
       .populate('userId', 'name email')
       .sort({ createdAt: -1 });
 
@@ -27,9 +28,10 @@ export const getLotReviews = async (req, res, next) => {
     let sum = 0;
     
     reviews.forEach(review => {
-      sum += review.rating;
-      if (breakdown[review.rating] !== undefined) {
-        breakdown[review.rating]++;
+      const star = Math.min(5, Math.max(1, Math.round(review.rating || 5)));
+      sum += review.rating || 5;
+      if (breakdown[star] !== undefined) {
+        breakdown[star]++;
       }
     });
 
@@ -136,6 +138,19 @@ export const createReview = async (req, res, next) => {
 
     // Populate user info to return
     const populatedReview = await review.populate('userId', 'name email');
+
+    // Emit live WebSocket event so all connected devices update their reviews & stars automatically
+    try {
+      const io = getIO();
+      io.emit('review:new', {
+        lotId: targetLotId,
+        review: populatedReview,
+        lotRating: averageRating,
+        lotRatingCount: ratingCount
+      });
+    } catch (socketErr) {
+      console.warn('Socket broadcast warning:', socketErr.message);
+    }
 
     res.status(200).json({
       message: 'Review saved successfully',
