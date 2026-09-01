@@ -4,6 +4,7 @@ import { Search, SlidersHorizontal } from 'lucide-react';
 import ParkingMap from '../../components/parking/ParkingMap.jsx';
 import LotCard from '../../components/parking/LotCard.jsx';
 import useParkingLots from '../../hooks/useParkingLots.js';
+import useSlots from '../../hooks/useSlots.js';
 import { ParkingSearchSkeleton } from '../../components/common/SkeletonLoader.jsx';
 import useAuth from '../../hooks/useAuth.js';
 
@@ -32,6 +33,9 @@ const ParkingSearchPage = ({ isTab = false }) => {
     const lccLot = allLots.filter(lot => lot.name === 'LCC Parking' || lot.name.includes('Los Caballeros') || lot.name.includes('LCC'));
     return lccLot.length > 0 ? lccLot : allLots;
   }, [allLots]);
+
+  const targetLotId = lots[0]?._id;
+  const { slots } = useSlots(targetLotId);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [availableOnly, setAvailableOnly] = useState(false);
@@ -158,7 +162,9 @@ const ParkingSearchPage = ({ isTab = false }) => {
         <div className="lg:col-span-2 h-full rounded-xl overflow-hidden border border-gray-200">
           <ParkingMap 
             lots={filteredLots} 
+            slots={slots}
             center={mapCenter} 
+            zoom={19}
             searchedPlace={searchedPlace} 
             hoveredLotId={hoveredLotId}
           />
