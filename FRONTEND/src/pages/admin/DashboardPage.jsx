@@ -91,8 +91,8 @@ const DashboardPage = () => {
         <SensorHealthRow sensors={sensorLogs} />
       </div>
 
-      {/* ESP32 Live Data */}
-      <ESP32StatusPanel />
+      {/* ESP32 Live Data commented out */}
+      {/* <ESP32StatusPanel /> */}
     </div>
   );
 };
