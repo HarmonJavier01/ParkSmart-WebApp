@@ -236,7 +236,7 @@ const LotDetailPage = () => {
               <MapPin className="w-4 h-4 text-parking-primary" />
               <span className="text-xs font-bold text-gray-800">Interactive Location Map</span>
             </div>
-            <ParkingMap lots={[lot]} slots={slots} center={{ lat: lot.lat || 16.045175, lng: lot.lng || 120.49120 }} zoom={19} />
+            <ParkingMap lots={[lot]} slots={slots} center={{ lat: lot.lat || 16.04507, lng: lot.lng || 120.49125 }} zoom={19} />
           </div>
         </div>
 

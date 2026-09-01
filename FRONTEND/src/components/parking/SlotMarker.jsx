@@ -13,8 +13,12 @@ const SlotMarker = ({ slot, position }) => {
     scale: 10
   };
 
+  const labelText = slot.slotNumber
+    ? String(slot.slotNumber).replace(/^SLOT_/i, '').replace(/^lot_/i, '')
+    : '';
+
   const markerLabel = {
-    text: slot.slotNumber,
+    text: labelText,
     color: '#ffffff',
     fontSize: '9px',
     fontWeight: 'bold'

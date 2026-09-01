@@ -31,9 +31,12 @@ const LotMarker = ({ lot, isHovered }) => {
   // Show InfoWindow if hovered from sidebar list OR hovered directly on the map marker
   const showInfoWindow = isHovered || isLocalHovered;
 
+  const isLCC = lot?.name && (lot.name.includes("Los Caballeros") || lot.name.includes("LCC"));
+  const position = isLCC ? { lat: 16.04507, lng: 120.49125 } : { lat: lot.lat || 16.04507, lng: lot.lng || 120.49125 };
+
   return (
     <Marker
-      position={{ lat: lot.lat, lng: lot.lng }}
+      position={position}
       icon={markerIcon}
       label={markerLabel}
       onMouseOver={() => setIsLocalHovered(true)}
