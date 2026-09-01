@@ -29,7 +29,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
   // - Manaoag Public Market Lot
   */
   const lots = useMemo(() => {
-    const lccLot = allLots.filter(lot => lot.name === 'LCC Parking');
+    const lccLot = allLots.filter(lot => lot.name === 'LCC Parking' || lot.name.includes('Los Caballeros') || lot.name.includes('LCC'));
     return lccLot.length > 0 ? lccLot : allLots;
   }, [allLots]);
 
@@ -39,7 +39,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
   const [sortBy, setSortBy] = useState('distance');
   const [hoveredLotId, setHoveredLotId] = useState(null);
 
-  const [mapCenter, setMapCenter] = useState({ lat: 16.0450924, lng: 120.4909147 });
+  const [mapCenter, setMapCenter] = useState({ lat: 16.045075, lng: 120.49090 });
   const [searchedPlace, setSearchedPlace] = useState(null);
 
   // Update map center when a specific lot is searched and found

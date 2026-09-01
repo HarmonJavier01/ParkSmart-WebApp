@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Review from '../models/Review.js';
 import ParkingLot from '../models/ParkingLot.js';
 import User from '../models/User.js';
@@ -8,10 +9,13 @@ export const getLotReviews = async (req, res, next) => {
   try {
     const { lotId } = req.params;
 
-    // Verify lot exists
-    const lot = await ParkingLot.findById(lotId);
-    if (!lot) {
-      return res.status(404).json({ message: 'Parking lot not found' });
+    if (!lotId || !mongoose.Types.ObjectId.isValid(lotId)) {
+      return res.json({
+        reviews: [],
+        rating: 5.0,
+        ratingCount: 0,
+        breakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+      });
     }
 
     const reviews = await Review.find({ lotId })

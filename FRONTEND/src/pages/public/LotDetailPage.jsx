@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { LotDetailPageSkeleton } from '../../components/common/SkeletonLoader.jsx';
 import ParkingMap from '../../components/parking/ParkingMap.jsx';
 import useAuth from '../../hooks/useAuth.js';
+import { normalizeImageUrl, normalizeImagesList, handleImageError, DEFAULT_LOT_IMAGE } from '../../utils/imageHelper.js';
 
 const LotDetailPage = () => {
   const { lotId } = useParams();
@@ -58,9 +59,11 @@ const LotDetailPage = () => {
     try {
       setReviewsLoading(true);
       const data = await reviewService.getReviewsByLot(lotId);
-      setReviewsData(data);
+      if (data && Array.isArray(data.reviews)) {
+        setReviewsData(data);
+      }
     } catch (err) {
-      console.error('Error fetching reviews:', err);
+      console.warn('Could not fetch reviews:', err?.response?.data?.message || err.message);
     } finally {
       setReviewsLoading(false);
     }
@@ -183,9 +186,7 @@ const LotDetailPage = () => {
   if (!lot) return <div className="text-center py-20 font-outfit text-gray-500">Lot not found</div>;
 
   // Image list fallback
-  const lotImages = lot.images && lot.images.length > 0 
-    ? lot.images 
-    : [lot.imageUrl || "/images/IMG20260604134124.jpg"];
+  const lotImages = normalizeImagesList(lot.images, lot.imageUrl);
 
   // Calculate percentage breakdown for reviews
   const totalR = reviewsData.ratingCount || 1;
@@ -235,7 +236,7 @@ const LotDetailPage = () => {
               <MapPin className="w-4 h-4 text-parking-primary" />
               <span className="text-xs font-bold text-gray-800">Interactive Location Map</span>
             </div>
-            <ParkingMap lots={[lot]} slots={slots} center={{ lat: lot.lat, lng: lot.lng }} zoom={20} />
+            <ParkingMap lots={[lot]} slots={slots} center={{ lat: lot.lat || 16.045075, lng: lot.lng || 120.49090 }} zoom={20} />
           </div>
         </div>
 
@@ -246,8 +247,9 @@ const LotDetailPage = () => {
             {/* 1. Cover Photo Panel */}
             <div className="h-48 relative w-full overflow-hidden bg-gray-900 group">
               <img 
-                src={lot.imageUrl || "/images/IMG20260604134124.jpg"} 
-                alt={lot.name} 
+                src={normalizeImageUrl(lot.imageUrl || lotImages[0])} 
+                onError={(e) => handleImageError(e)}
+                alt={lot.name || "Parking Lot"} 
                 className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -362,7 +364,12 @@ const LotDetailPage = () => {
                           onClick={() => setActivePhotoIndex(i)}
                           className="h-20 rounded-xl overflow-hidden border border-gray-100 bg-gray-100 cursor-pointer relative group"
                         >
-                          <img src={img} alt="Lot detail" className="w-full h-full object-cover transition group-hover:scale-105" />
+                          <img 
+                            src={normalizeImageUrl(img)} 
+                            onError={(e) => handleImageError(e)}
+                            alt="Lot detail" 
+                            className="w-full h-full object-cover transition group-hover:scale-105" 
+                          />
                           {i === 2 && lotImages.length > 3 && (
                             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm">
                               +{lotImages.length - 3}
@@ -644,7 +651,8 @@ const LotDetailPage = () => {
           {/* Active Image */}
           <div className="max-w-4xl max-h-[75vh] flex items-center justify-center overflow-hidden rounded-2xl border border-white/10">
             <img 
-              src={lotImages[activePhotoIndex]} 
+              src={normalizeImageUrl(lotImages[activePhotoIndex])} 
+              onError={(e) => handleImageError(e)}
               alt={`Gallery View ${activePhotoIndex + 1}`} 
               className="max-w-full max-h-[75vh] object-contain"
             />

@@ -1,6 +1,8 @@
 import { MapPin, Car, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { normalizeImageUrl, handleImageError } from '../../utils/imageHelper.js';
+
 const LotCard = ({ lot, onMouseEnter, onMouseLeave }) => {
   const available = lot.availableSlots || 0;
   const total = lot.totalSlots || 1;
@@ -13,11 +15,12 @@ const LotCard = ({ lot, onMouseEnter, onMouseLeave }) => {
       onMouseLeave={onMouseLeave}
     >
       {/* Lot Image and Availability Badge */}
-      <div className="relative h-48 w-full overflow-hidden">
+      <div className="relative h-48 w-full overflow-hidden bg-gray-100">
         <img 
-          src={lot.imageUrl || "/images/IMG20260604134124.jpg"} 
+          src={normalizeImageUrl(lot.imageUrl)} 
+          onError={(e) => handleImageError(e)}
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
-          alt={lot.name} 
+          alt={lot.name || "Parking Lot"} 
         />
         <span className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-md text-white ${
           percentage > 50 ? 'bg-green-600' : percentage > 20 ? 'bg-amber-500' : 'bg-red-600'

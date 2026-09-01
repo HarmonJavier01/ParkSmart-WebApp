@@ -3,6 +3,8 @@ import { Marker, InfoWindow } from '@react-google-maps/api';
 import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
 
+import { normalizeImageUrl, handleImageError } from '../../utils/imageHelper.js';
+
 const LotMarker = ({ lot, isHovered }) => {
   const navigate = useNavigate();
   const [isLocalHovered, setIsLocalHovered] = useState(false);
@@ -51,8 +53,9 @@ const LotMarker = ({ lot, isHovered }) => {
             {/* Cover photo */}
             <div className="h-28 w-full relative overflow-hidden bg-gray-900">
               <img 
-                src={lot.imageUrl || "/images/IMG20260604134124.jpg"} 
-                alt={lot.name} 
+                src={normalizeImageUrl(lot.imageUrl)} 
+                onError={(e) => handleImageError(e)}
+                alt={lot.name || "Parking Lot"} 
                 className="w-full h-full object-cover"
               />
             </div>

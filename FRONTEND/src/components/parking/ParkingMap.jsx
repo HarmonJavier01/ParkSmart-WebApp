@@ -20,21 +20,36 @@ const userBlueDotIcon = `data:image/svg+xml;utf8,${encodeURIComponent(`
   </svg>
 `)}`;
 
+// Helper to calculate center of boundary polygon
+const getPolygonCenter = (coords) => {
+  if (!coords || coords.length === 0) return null;
+  const sum = coords.reduce(
+    (acc, p) => ({ lat: acc.lat + p.lat, lng: acc.lng + p.lng }),
+    { lat: 0, lng: 0 }
+  );
+  return { lat: sum.lat / coords.length, lng: sum.lng / coords.length };
+};
+
+const boundaryCenter = getPolygonCenter(manaoagBoundary) || { lat: 16.045075, lng: 120.49090 };
+
 // Helper to calculate coordinate of each slot inside a parking row line
 const getSlotCoordinates = (lot, index, totalSlots) => {
-  // Custom angles and spacing to align perfectly with the map's satellite layout
   let latSpacing = 0.000006;
   let lngSpacing = 0.000018;
 
-  if (lot.name && (lot.name.includes("Los Caballeros") || lot.name.includes("LCC"))) {
-    // Los Caballeros is a diagonal line along Milo St (North-West to South-East)
+  const isLCC = lot?.name && (lot.name.includes("Los Caballeros") || lot.name.includes("LCC"));
+  const baseLat = isLCC ? boundaryCenter.lat : (lot?.lat || boundaryCenter.lat);
+  const baseLng = isLCC ? boundaryCenter.lng : (lot?.lng || boundaryCenter.lng);
+
+  if (isLCC) {
+    // Los Caballeros is a diagonal line along Milo St (North-West to South-East) centered inside the boundary box
     latSpacing = -0.000007;
     lngSpacing = 0.000014;
-  } else if (lot.name && lot.name.includes("Church")) {
+  } else if (lot?.name && lot.name.includes("Church")) {
     // Church is a line running North to South
     latSpacing = 0.000010;
     lngSpacing = 0.000004;
-  } else if (lot.name && lot.name.includes("Market")) {
+  } else if (lot?.name && lot.name.includes("Market")) {
     // Market is running West to East
     latSpacing = 0.000002;
     lngSpacing = 0.000015;
@@ -44,11 +59,11 @@ const getSlotCoordinates = (lot, index, totalSlots) => {
   const startLngOffset = -((totalSlots - 1) / 2) * lngSpacing;
 
   return {
-    lat: lot.lat + startLatOffset + (index * latSpacing),
-    lng: lot.lng + startLngOffset + (index * lngSpacing)
+    lat: baseLat + startLatOffset + (index * latSpacing),
+    lng: baseLng + startLngOffset + (index * lngSpacing)
   };
 };
-const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4909147 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
+const ParkingMap = ({ lots, slots = null, center = { lat: 16.045075, lng: 120.49090 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY
   });
@@ -263,22 +278,26 @@ const ParkingMap = ({ lots, slots = null, center = { lat: 16.0450924, lng: 120.4
           />
         )}
         {/* Draw circle boundary scope for every parking lot on the map */}
-        {lots.map((lot) => (
-          <Circle
-            key={`boundary-${lot._id}`}
-            center={{ lat: lot.lat, lng: lot.lng }}
-            radius={lots.length === 1 ? 22 : 35} // slightly larger radius on general search map for readability
-            options={{
-              strokeColor: '#0d9488',
-              strokeOpacity: 0.7,
-              strokeWeight: 2,
-              fillColor: '#0d9488',
-              fillOpacity: 0.1,
-              clickable: false,
-              zIndex: -1
-            }}
-          />
-        ))}
+        {lots.map((lot) => {
+          const isLCC = lot?.name && (lot.name.includes("Los Caballeros") || lot.name.includes("LCC"));
+          const circleCenter = isLCC ? boundaryCenter : { lat: lot.lat || boundaryCenter.lat, lng: lot.lng || boundaryCenter.lng };
+          return (
+            <Circle
+              key={`boundary-${lot._id}`}
+              center={circleCenter}
+              radius={lots.length === 1 ? 28 : 35} // Centered right on the boundary box
+              options={{
+                strokeColor: '#0d9488',
+                strokeOpacity: 0.7,
+                strokeWeight: 2,
+                fillColor: '#0d9488',
+                fillOpacity: 0.1,
+                clickable: false,
+                zIndex: -1
+              }}
+            />
+          );
+        })}
 
         {slots && slots.length > 0 ? (
           // Slot-level detail view: render individual slots as red/green circular markers in a line
