@@ -1,126 +1,124 @@
 import { useState } from 'react';
-import { Save, Mail, Bell, UserCog } from 'lucide-react';
-import InputField from '../../components/forms/InputField.jsx';
-import SelectField from '../../components/forms/SelectField.jsx';
+import { User, Activity, Info } from 'lucide-react';
+import useAuth from '../../hooks/useAuth.js';
+import useSocket from '../../hooks/useSocket.js';
 
 const SettingsPage = () => {
-  const [rates, setRates] = useState({ lot1: 20, lot2: 15, lot3: 25 });
-  const [notifications, setNotifications] = useState({ email: true, sms: false });
-  const [smtp, setSmtp] = useState({ host: '', port: '', user: '', pass: '' });
-  const [admins, setAdmins] = useState([
-    { _id: '1', name: 'Super Admin', email: 'admin@parksmart.ph', role: 'superadmin' },
-    { _id: '2', name: 'Lot Operator', email: 'operator@parksmart.ph', role: 'lot_operator' }
-  ]);
+  const { user } = useAuth();
+  const { connected: socketConnected } = useSocket();
 
-  const handleSaveRates = () => {
-    alert('Rates saved (demo)');
-  };
-
-  const handleSaveSMTP = () => {
-    alert('SMTP config saved (demo)');
-  };
+  const adminName = user?.name || 'Super Admin';
+  const adminEmail = user?.email || 'admin@parksmart.ph';
+  const adminRole = (user?.role || 'superadmin').toUpperCase();
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-2xl font-bold">Settings</h1>
+    <div className="max-w-4xl space-y-6 font-outfit">
+      <h1 className="text-3xl font-black text-gray-900 tracking-tight">Settings</h1>
 
-      {/* Parking Rates commented out */}
-      {/*
-      <div className="card">
-        <div className="flex items-center gap-2 mb-4">
-          <UserCog className="w-5 h-5 text-parking-primary" />
-          <h2 className="text-lg font-bold">Parking Rates</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg">
-          <InputField
-            label="LCC Pay Parking (per hour)"
-            type="number"
-            value={rates.lot3}
-            onChange={(e) => setRates({ ...rates, lot3: e.target.value })}
-          />
-        </div>
-        <button onClick={handleSaveRates} className="mt-4 btn-primary text-sm flex items-center gap-2">
-          <Save className="w-4 h-4" /> Save Rates
-        </button>
-      </div>
-      */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {/* 1. Admin Profile Card */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100/80 space-y-5">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
+              <User className="w-5 h-5" />
+            </div>
+            <h2 className="text-lg font-black text-gray-900 tracking-tight">Admin Profile</h2>
+          </div>
 
-      {/* Notifications */}
-      <div className="card">
-        <div className="flex items-center gap-2 mb-4">
-          <Bell className="w-5 h-5 text-parking-primary" />
-          <h2 className="text-lg font-bold">Notifications</h2>
-        </div>
-        <div className="space-y-3">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={notifications.email}
-              onChange={(e) => setNotifications({ ...notifications, email: e.target.checked })}
-              className="w-4 h-4 text-teal-600 rounded"
-            />
-            <span className="text-sm">Email notifications for new reservations</span>
-          </label>
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={notifications.sms}
-              onChange={(e) => setNotifications({ ...notifications, sms: e.target.checked })}
-              className="w-4 h-4 text-teal-600 rounded"
-            />
-            <span className="text-sm">SMS alerts for sensor anomalies</span>
-          </label>
-        </div>
-      </div>
+          <div className="space-y-4 pt-1">
+            <div className="flex items-center justify-between py-1 border-b border-gray-50">
+              <span className="text-sm font-semibold text-gray-400">Name</span>
+              <span className="text-sm font-black text-gray-900">{adminName}</span>
+            </div>
 
-      {/* SMTP Config */}
-      <div className="card">
-        <div className="flex items-center gap-2 mb-4">
-          <Mail className="w-5 h-5 text-parking-primary" />
-          <h2 className="text-lg font-bold">SMTP Configuration</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
-          <InputField label="SMTP Host" value={smtp.host} onChange={(e) => setSmtp({ ...smtp, host: e.target.value })} />
-          <InputField label="SMTP Port" type="number" value={smtp.port} onChange={(e) => setSmtp({ ...smtp, port: e.target.value })} />
-          <InputField label="Username" value={smtp.user} onChange={(e) => setSmtp({ ...smtp, user: e.target.value })} />
-          <InputField label="Password" type="password" value={smtp.pass} onChange={(e) => setSmtp({ ...smtp, pass: e.target.value })} />
-        </div>
-        <button onClick={handleSaveSMTP} className="mt-4 btn-primary text-sm flex items-center gap-2">
-          <Save className="w-4 h-4" /> Save SMTP
-        </button>
-      </div>
+            <div className="flex items-center justify-between py-1 border-b border-gray-50">
+              <span className="text-sm font-semibold text-gray-400">Email</span>
+              <span className="text-sm font-bold text-gray-900">{adminEmail}</span>
+            </div>
 
-      {/* Admin Accounts */}
-      <div className="card">
-        <h2 className="text-lg font-bold mb-4">Admin Accounts</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 font-medium text-gray-500">Name</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-500">Email</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-500">Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {admins.map((admin) => (
-                <tr key={admin._id} className="border-b border-gray-50">
-                  <td className="py-3 px-4">{admin.name}</td>
-                  <td className="py-3 px-4 text-gray-600">{admin.email}</td>
-                  <td className="py-3 px-4">
-                    <span className="text-xs font-bold px-2 py-1 rounded-full bg-teal-100 text-teal-700 capitalize">
-                      {admin.role}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            <div className="flex items-center justify-between py-1">
+              <span className="text-sm font-semibold text-gray-400">Role</span>
+              <span className="text-xs font-black px-2.5 py-1 rounded-lg bg-teal-50 text-teal-700 tracking-wider">
+                {adminRole}
+              </span>
+            </div>
+          </div>
         </div>
+
+        {/* 2. System Status Card */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100/80 space-y-5">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
+              <Activity className="w-5 h-5" />
+            </div>
+            <h2 className="text-lg font-black text-gray-900 tracking-tight">System Status</h2>
+          </div>
+
+          <div className="space-y-4 pt-1">
+            <div className="flex items-center justify-between py-1 border-b border-gray-50">
+              <span className="text-sm font-semibold text-gray-400">Backend API</span>
+              <div className="flex items-center gap-1.5 font-bold text-sm text-emerald-600">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Online</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between py-1 border-b border-gray-50">
+              <span className="text-sm font-semibold text-gray-400">Socket.IO</span>
+              <div className="flex items-center gap-1.5 font-bold text-sm">
+                <span className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></span>
+                <span className={socketConnected ? 'text-emerald-600' : 'text-rose-500'}>
+                  {socketConnected ? 'Online' : 'Connecting...'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between py-1">
+              <span className="text-sm font-semibold text-gray-400">Google Maps</span>
+              <div className="flex items-center gap-1.5 font-bold text-sm text-emerald-600">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Online</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3. About Card */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100/80 space-y-5 md:col-span-2">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
+              <Info className="w-5 h-5" />
+            </div>
+            <h2 className="text-lg font-black text-gray-900 tracking-tight">About</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div className="flex items-center justify-between p-3.5 bg-gray-50/70 rounded-2xl">
+              <span className="text-sm font-semibold text-gray-400">App</span>
+              <span className="text-sm font-black text-gray-900">ParkSmart Web</span>
+            </div>
+
+            <div className="flex items-center justify-between p-3.5 bg-gray-50/70 rounded-2xl">
+              <span className="text-sm font-semibold text-gray-400">Version</span>
+              <span className="text-sm font-black text-gray-900">1.0.0</span>
+            </div>
+
+            <div className="flex items-center justify-between p-3.5 bg-gray-50/70 rounded-2xl">
+              <span className="text-sm font-semibold text-gray-400">Platform</span>
+              <span className="text-sm font-bold text-gray-900">Web (React + Vite)</span>
+            </div>
+
+            <div className="flex items-center justify-between p-3.5 bg-gray-50/70 rounded-2xl">
+              <span className="text-sm font-semibold text-gray-400">Location</span>
+              <span className="text-sm font-black text-gray-900">Manaoag, Pangasinan</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );
 };
 
 export default SettingsPage;
-
