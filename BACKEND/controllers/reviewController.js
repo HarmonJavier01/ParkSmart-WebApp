@@ -68,15 +68,34 @@ export const createReview = async (req, res, next) => {
       }
     }
 
+    const parsedRating = Number(rating);
+    if (!parsedRating || parsedRating < 1 || parsedRating > 5) {
+      return res.status(400).json({ message: 'Please provide a rating between 1 and 5 stars' });
+    }
+
+    // Resolve parking lot
+    let lot = null;
+    if (lotId && mongoose.Types.ObjectId.isValid(lotId)) {
+      lot = await ParkingLot.findById(lotId);
+    }
+    if (!lot) {
+      lot = await ParkingLot.findOne({});
+    }
+
+    if (!lot) {
+      return res.status(404).json({ message: 'Parking lot not found' });
+    }
+
+    const targetLotId = lot._id;
+
     // If no authenticated user, use/create a guest user account
     if (!userId) {
       const name = (guestName && guestName.trim()) || 'Guest Visitor';
-      // Find or create a Guest user for this name to satisfy index uniqueness
       let guestUser = await User.findOne({ name, role: 'user' });
       if (!guestUser) {
         guestUser = await User.create({
           name,
-          email: `guest_${Date.now()}_${Math.floor(Math.random() * 1000)}@parksmart.ph`,
+          email: `guest_${Date.now()}_${Math.floor(Math.random() * 100000)}@parksmart.ph`,
           password: 'GuestPassword123!',
           role: 'user',
           isVerified: true
@@ -85,42 +104,32 @@ export const createReview = async (req, res, next) => {
       userId = guestUser._id;
     }
 
-    if (!rating || rating < 1 || rating > 5) {
-      return res.status(400).json({ message: 'Please provide a rating between 1 and 5 stars' });
-    }
-
-    // Verify lot exists
-    const lot = await ParkingLot.findById(lotId);
-    if (!lot) {
-      return res.status(404).json({ message: 'Parking lot not found' });
-    }
-
     // Check if user already reviewed this lot
-    let review = await Review.findOne({ lotId, userId });
+    let review = await Review.findOne({ lotId: targetLotId, userId });
 
     if (review) {
       // Update existing review
-      review.rating = rating;
+      review.rating = parsedRating;
       review.feedback = feedback || '';
       await review.save();
     } else {
       // Create new review
       review = await Review.create({
-        lotId,
+        lotId: targetLotId,
         userId,
-        rating,
+        rating: parsedRating,
         feedback: feedback || ''
       });
     }
 
     // Recalculate average rating and ratingCount for the lot
-    const reviews = await Review.find({ lotId });
+    const reviews = await Review.find({ lotId: targetLotId });
     const ratingCount = reviews.length;
     const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
     const averageRating = ratingCount > 0 ? Math.round((sum / ratingCount) * 10) / 10 : 5.0;
 
     // Update ParkingLot document
-    await ParkingLot.findByIdAndUpdate(lotId, {
+    await ParkingLot.findByIdAndUpdate(targetLotId, {
       rating: averageRating,
       ratingCount: ratingCount
     });

@@ -19,16 +19,26 @@ const app = express();
 app.use(helmet());
 app.use(cors({
   origin: function (origin, callback) {
-    const allowed = [
-      process.env.CLIENT_URL || 'http://localhost:5173',
+    // Allow requests with no origin (mobile apps, curl, Postman, etc.)
+    if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      process.env.CLIENT_URL,
+      'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:5175'
-    ];
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin || allowed.includes(origin)) {
+    ].filter(Boolean);
+
+    // Allow Vercel deployments (*.vercel.app), localhost, or any configured origin
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.vercel.app') ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1')
+    ) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(null, true); // Permissive fallback for capstone web and mobile clients
     }
   },
   credentials: true

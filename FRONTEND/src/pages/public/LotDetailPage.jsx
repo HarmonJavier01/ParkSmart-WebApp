@@ -98,26 +98,31 @@ const LotDetailPage = () => {
     if (!newRating) return;
     try {
       setIsSubmittingReview(true);
-      const response = await reviewService.createReview(lotId, {
-        rating: newRating,
+      const targetId = lot?._id || lotId;
+      const response = await reviewService.createReview(targetId, {
+        rating: Number(newRating),
         feedback: newFeedback,
-        guestName: !isAuthenticated ? guestName : undefined
+        guestName: !isAuthenticated ? guestName : (user?.name || guestName)
       });
-      showToast(response.message || 'Review saved!');
-      
-      // Refresh reviews and lot metadata (rating / ratingCount)
-      await fetchReviews();
-      const updatedLot = await lotService.getLotById(lotId);
-      setLot(updatedLot);
+      showToast(response.message || 'Review saved successfully!');
       
       // Close modal
       setShowReviewModal(false);
       setNewRating(5);
       setNewFeedback('');
       setGuestName('');
+
+      // Refresh reviews and lot metadata (rating / ratingCount)
+      try {
+        await fetchReviews();
+        const updatedLot = await lotService.getLotById(targetId);
+        if (updatedLot) setLot(updatedLot);
+      } catch (e) {
+        console.warn('Silent refresh error after review:', e);
+      }
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || 'Failed to submit review');
+      console.error('Review submit error:', err);
+      alert(err.response?.data?.message || err.message || 'Failed to submit review');
     } finally {
       setIsSubmittingReview(false);
     }
