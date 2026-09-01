@@ -31,42 +31,54 @@ const getPolygonCenter = (coords) => {
 };
 
 // Compound boundary polygon coordinates center
-const boundaryCenter = getPolygonCenter(manaoagBoundary) || { lat: 16.045285, lng: 120.49119 };
+const boundaryCenter = getPolygonCenter(manaoagBoundary) || { lat: 16.04527, lng: 120.49119 };
 
-// Exact custom GPS layout map matching the physical satellite lot arrangement in the diagram (strictly North of Milo St)
+// Exact custom GPS layout map matching the physical satellite lot arrangement in the schematic diagram
 const LCC_SLOT_COORDINATES = {
-  // Bottom section: slots 1 to 5 (right column) & slots 6 to 10 (left column) in the entrance driveway north of Milo St
-  1: { lat: 16.04476, lng: 120.49131 },
-  2: { lat: 16.04482, lng: 120.49131 },
-  3: { lat: 16.04488, lng: 120.49131 },
-  4: { lat: 16.04494, lng: 120.49131 },
-  5: { lat: 16.04500, lng: 120.49131 },
-  6: { lat: 16.04476, lng: 120.49124 },
-  7: { lat: 16.04482, lng: 120.49124 },
-  8: { lat: 16.04488, lng: 120.49124 },
-  9: { lat: 16.04494, lng: 120.49124 },
-  10: { lat: 16.04500, lng: 120.49124 },
+  // Bottom-Left Entrance (Slots 01 to 04 along west side of entrance lane)
+  1: { lat: 16.04478, lng: 120.49122 },
+  2: { lat: 16.04486, lng: 120.49122 },
+  3: { lat: 16.04494, lng: 120.49122 },
+  4: { lat: 16.04502, lng: 120.49122 },
 
-  // Middle-south section (south of green roof building): slots 11 to 16
-  11: { lat: 16.04507, lng: 120.49128 },
-  12: { lat: 16.04513, lng: 120.49128 },
-  13: { lat: 16.04519, lng: 120.49128 },
-  14: { lat: 16.04525, lng: 120.49128 },
-  15: { lat: 16.04531, lng: 120.49128 },
-  16: { lat: 16.04537, lng: 120.49128 },
+  // Bottom-Right Entrance (Slots 05 to 09 / 10 to 14 along east side below LCC building)
+  5: { lat: 16.04478, lng: 120.49134 },
+  6: { lat: 16.04486, lng: 120.49134 },
+  7: { lat: 16.04494, lng: 120.49134 },
+  8: { lat: 16.04502, lng: 120.49134 },
+  9: { lat: 16.04510, lng: 120.49134 },
 
-  // Middle-north section (north of green roof building): slots 17 to 18
-  17: { lat: 16.04554, lng: 120.49128 },
-  18: { lat: 16.04561, lng: 120.49128 },
+  // Diagonal / Angled Section (Slots 10 to 12 / 15 to 17)
+  10: { lat: 16.04513, lng: 120.49117 },
+  11: { lat: 16.04521, lng: 120.49111 },
+  12: { lat: 16.04529, lng: 120.49105 },
 
-  // Top-left section (north-west yard): slots 19 to 25
-  19: { lat: 16.04540, lng: 120.49114 },
-  20: { lat: 16.04546, lng: 120.49114 },
-  21: { lat: 16.04552, lng: 120.49114 },
-  22: { lat: 16.04558, lng: 120.49114 },
-  23: { lat: 16.04564, lng: 120.49114 },
-  24: { lat: 16.04570, lng: 120.49114 },
-  25: { lat: 16.04576, lng: 120.49114 }
+  // Top-Left (Upper West Yard, Slots 13 to 19 / 18 to 27)
+  13: { lat: 16.04537, lng: 120.49103 },
+  14: { lat: 16.04544, lng: 120.49103 },
+  15: { lat: 16.04551, lng: 120.49103 },
+  16: { lat: 16.04558, lng: 120.49103 },
+  17: { lat: 16.04565, lng: 120.49103 },
+  18: { lat: 16.04572, lng: 120.49103 },
+  19: { lat: 16.04579, lng: 120.49103 },
+
+  // Top-Right (North of LCC Building, Slots 20 to 25 / 28 to 33)
+  20: { lat: 16.04544, lng: 120.49134 },
+  21: { lat: 16.04551, lng: 120.49134 },
+  22: { lat: 16.04558, lng: 120.49134 },
+  23: { lat: 16.04565, lng: 120.49134 },
+  24: { lat: 16.04572, lng: 120.49134 },
+  25: { lat: 16.04579, lng: 120.49134 },
+
+  // Direct number aliases if slots 26 to 33 are passed
+  26: { lat: 16.04572, lng: 120.49103 },
+  27: { lat: 16.04579, lng: 120.49103 },
+  28: { lat: 16.04544, lng: 120.49134 },
+  29: { lat: 16.04551, lng: 120.49134 },
+  30: { lat: 16.04558, lng: 120.49134 },
+  31: { lat: 16.04565, lng: 120.49134 },
+  32: { lat: 16.04572, lng: 120.49134 },
+  33: { lat: 16.04579, lng: 120.49134 }
 };
 
 // Helper to calculate coordinate of each slot inside a parking row line
@@ -106,7 +118,7 @@ const getSlotCoordinates = (lot, slot, index, totalSlots) => {
     lng: baseLng + startLngOffset + (index * lngSpacing)
   };
 };
-const ParkingMap = ({ lots, slots = null, center = { lat: 16.045285, lng: 120.49119 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
+const ParkingMap = ({ lots, slots = null, center = { lat: 16.04527, lng: 120.49119 }, zoom = 15, searchedPlace = null, hoveredLotId = null }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY
   });

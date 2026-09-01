@@ -32,7 +32,7 @@ const LotMarker = ({ lot, isHovered }) => {
   const showInfoWindow = isHovered || isLocalHovered;
 
   const isLCC = lot?.name && (lot.name.includes("Los Caballeros") || lot.name.includes("LCC"));
-  const position = isLCC ? { lat: 16.045285, lng: 120.49119 } : { lat: lot.lat || 16.045285, lng: lot.lng || 120.49119 };
+  const position = isLCC ? { lat: 16.04527, lng: 120.49119 } : { lat: lot.lat || 16.04527, lng: lot.lng || 120.49119 };
 
   return (
     <Marker
