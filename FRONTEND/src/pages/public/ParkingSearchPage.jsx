@@ -29,12 +29,13 @@ const ParkingSearchPage = ({ isTab = false }) => {
   // - Manaoag Public Market Lot
   */
   const lots = useMemo(() => {
-    return allLots.filter(lot => lot.name === 'LCC Pay Parking');
+    const lccLot = allLots.filter(lot => lot.name === 'LCC Pay Parking');
+    return lccLot.length > 0 ? lccLot : allLots;
   }, [allLots]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [availableOnly, setAvailableOnly] = useState(false);
-  const [selectedSlotType, setSelectedSlotType] = useState('regular');
+  const [selectedSlotType, setSelectedSlotType] = useState('all');
   const [sortBy, setSortBy] = useState('distance');
   const [hoveredLotId, setHoveredLotId] = useState(null);
 

@@ -4,15 +4,23 @@ import userService from '../services/userService.js';
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(() => localStorage.getItem('token'));
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(true);
 
   const login = useCallback((userData, authToken) => {
-    setUser(userData);
-    setToken(authToken);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', authToken);
+    setUser(userData);
+    setToken(authToken);
+    setLoading(false);
   }, []);
 
   const logout = useCallback(() => {
@@ -23,29 +31,30 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const verifySession = async () => {
+    const verifyInitialSession = async () => {
+      const storedToken = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
-      if (storedUser && token) {
+
+      if (storedToken && storedUser) {
         try {
-          // Set local user data immediately to enable fast initial rendering
-          setUser(JSON.parse(storedUser));
-          
-          // Verify with backend to ensure token is valid and sync details
           const freshUser = await userService.getMe();
           setUser(freshUser);
           localStorage.setItem('user', JSON.stringify(freshUser));
         } catch (error) {
-          console.error('Session verification failed, logging out:', error);
-          logout();
+          if (error.response?.status === 401 || error.response?.status === 404) {
+            console.warn('Session expired, logging out:', error.message);
+            logout();
+          }
         }
       } else {
-        logout();
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
       }
       setLoading(false);
     };
 
-    verifySession();
-  }, [token, logout]);
+    verifyInitialSession();
+  }, [logout]);
 
   const updateUser = useCallback((updatedFields) => {
     setUser((prev) => {
