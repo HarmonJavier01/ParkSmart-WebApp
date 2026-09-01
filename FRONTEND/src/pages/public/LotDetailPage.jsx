@@ -257,6 +257,12 @@ const LotDetailPage = () => {
     };
   }, [reviewsData.reviews, lot?.rating]);
 
+  if (loading || slotsLoading) return <LotDetailPageSkeleton />;
+  if (!lot) return <div className="text-center py-20 font-outfit text-gray-500">Lot not found</div>;
+
+  // Image list fallback
+  const lotImages = normalizeImagesList(lot?.images, lot?.imageUrl);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-outfit">
       {/* Toast Alert */}
