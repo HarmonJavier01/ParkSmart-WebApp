@@ -29,7 +29,7 @@ const ParkingSearchPage = ({ isTab = false }) => {
   // - Manaoag Public Market Lot
   */
   const lots = useMemo(() => {
-    const lccLot = allLots.filter(lot => lot.name === 'LCC Pay Parking');
+    const lccLot = allLots.filter(lot => lot.name === 'LCC Parking');
     return lccLot.length > 0 ? lccLot : allLots;
   }, [allLots]);
 

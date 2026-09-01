@@ -81,7 +81,7 @@ const seedDatabase = async () => {
       "ratingCount": 0
     }
     */
-    lotsData = lotsData.filter(lot => lot.name === 'LCC Pay Parking');
+    lotsData = lotsData.filter(lot => lot.name === 'LCC Parking');
     slotsData = slotsData.filter(slot => slot.lotId === '6648a1b2c3d4e5f6a7b8c9d2');
     reservationsData = reservationsData.filter(res => res.lotId === '6648a1b2c3d4e5f6a7b8c9d2');
     reviewsData = reviewsData.filter(rev => rev.lotId === '6648a1b2c3d4e5f6a7b8c9d2');
