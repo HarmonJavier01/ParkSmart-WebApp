@@ -8,7 +8,8 @@ import SlotGrid from '../../components/parking/SlotGrid.jsx';
 import useSlots from '../../hooks/useSlots.js';
 import lotService from '../../services/lotService.js';
 import reviewService from '../../services/reviewService.js';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useSocketEvent } from '../../hooks/useSocket.js';
 import { LotDetailPageSkeleton } from '../../components/common/SkeletonLoader.jsx';
 import ParkingMap from '../../components/parking/ParkingMap.jsx';
 import useAuth from '../../hooks/useAuth.js';
@@ -84,13 +85,26 @@ const LotDetailPage = () => {
     fetchReviews();
   }, [lotId]);
 
+  useSocketEvent('review:new', (data) => {
+    if (data?.lotId === lotId || String(data?.lotId) === String(lot?._id)) {
+      setReviewsData(prev => {
+        const existing = prev?.reviews || [];
+        const exists = existing.some(r => r._id === data.review?._id);
+        const updatedList = exists
+          ? existing.map(r => r._id === data.review?._id ? data.review : r)
+          : [data.review, ...existing];
+        return {
+          ...prev,
+          reviews: updatedList,
+          rating: data.lotRating || prev.rating,
+          ratingCount: data.lotRatingCount || prev.ratingCount
+        };
+      });
+    }
+  });
+
   const handleSlotClick = (slot) => {
     // TODO: Reservations must be removed. Slot click reservation navigation is commented out.
-    /*
-    if (slot.status === 'available') {
-      navigate(`/reserve/${slot._id}?lotId=${lotId}`);
-    }
-    */
   };
 
   const handleReviewSubmit = async (e) => {
@@ -114,7 +128,7 @@ const LotDetailPage = () => {
 
       showToast(response?.message || 'Review submitted successfully!');
       
-      // Update local reviewsData state immediately so the user sees their new review right away
+      // Update local reviewsData state immediately so the user sees their new review and star rating right away
       const newReviewItem = {
         _id: 'review_' + Date.now(),
         rating: Number(newRating),
@@ -130,7 +144,7 @@ const LotDetailPage = () => {
         const existingReviews = prev?.reviews || [];
         const updatedReviews = [newReviewItem, ...existingReviews.filter(r => r.userId?.name !== reviewPayload.guestName)];
         const total = updatedReviews.length;
-        const sum = updatedReviews.reduce((acc, r) => acc + r.rating, 0);
+        const sum = updatedReviews.reduce((acc, r) => acc + (r.rating || 5), 0);
         const avg = total > 0 ? Math.round((sum / total) * 10) / 10 : 5.0;
         return {
           ...prev,
@@ -164,18 +178,14 @@ const LotDetailPage = () => {
     const diffMin = Math.floor(diffSec / 60);
     const diffHr = Math.floor(diffMin / 60);
     const diffDays = Math.floor(diffHr / 24);
-    const diffMonths = Math.floor(diffDays / 30);
-    const diffYears = Math.floor(diffDays / 365);
 
-    if (diffSec < 60) return 'just now';
+    if (diffSec < 60) return 'Just now';
     if (diffMin < 60) return `${diffMin}m ago`;
     if (diffHr < 24) return `${diffHr}h ago`;
-    if (diffDays < 30) return `${diffDays}d ago`;
-    if (diffMonths < 12) return `${diffMonths} months ago`;
-    return `${diffYears} years ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
   };
 
-  // Helper to render stars
   const renderStars = (score, size = 16, className = "text-amber-400 fill-amber-400") => {
     const stars = [];
     const floorRating = Math.floor(score);
@@ -200,34 +210,52 @@ const LotDetailPage = () => {
   };
 
   // Sort reviews
-  const sortedReviews = [...reviewsData.reviews].sort((a, b) => {
-    if (sortBy === 'newest') {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    }
-    if (sortBy === 'highest') {
-      return b.rating - a.rating;
-    }
-    if (sortBy === 'lowest') {
-      return a.rating - b.rating;
-    }
-    return 0;
-  });
+  const sortedReviews = useMemo(() => {
+    return [...(reviewsData.reviews || [])].sort((a, b) => {
+      if (sortBy === 'newest') {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      if (sortBy === 'highest') {
+        return (b.rating || 5) - (a.rating || 5);
+      }
+      if (sortBy === 'lowest') {
+        return (a.rating || 5) - (b.rating || 5);
+      }
+      return 0;
+    });
+  }, [reviewsData.reviews, sortBy]);
 
-  if (loading || slotsLoading) return <LotDetailPageSkeleton />;
-  if (!lot) return <div className="text-center py-20 font-outfit text-gray-500">Lot not found</div>;
+  // Real-time dynamic rating statistics derived from all reviews
+  const { currentRating, currentRatingCount, ratingPercentages } = useMemo(() => {
+    const list = reviewsData.reviews || [];
+    const count = list.length;
+    
+    const bd = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    let sum = 0;
+    
+    list.forEach(r => {
+      const star = Math.min(5, Math.max(1, Math.round(r.rating || 5)));
+      bd[star] = (bd[star] || 0) + 1;
+      sum += (r.rating || 5);
+    });
 
-  // Image list fallback
-  const lotImages = normalizeImagesList(lot.images, lot.imageUrl);
+    const avg = count > 0 ? Math.round((sum / count) * 10) / 10 : (lot?.rating || 5.0);
+    const totalForPercent = count > 0 ? count : 1;
 
-  // Calculate percentage breakdown for reviews
-  const totalR = reviewsData.ratingCount || 1;
-  const ratingPercentages = {
-    5: Math.round(((reviewsData.breakdown?.[5] || 0) / totalR) * 100),
-    4: Math.round(((reviewsData.breakdown?.[4] || 0) / totalR) * 100),
-    3: Math.round(((reviewsData.breakdown?.[3] || 0) / totalR) * 100),
-    2: Math.round(((reviewsData.breakdown?.[2] || 0) / totalR) * 100),
-    1: Math.round(((reviewsData.breakdown?.[1] || 0) / totalR) * 100)
-  };
+    const percentages = {
+      5: count > 0 ? Math.round((bd[5] / totalForPercent) * 100) : 0,
+      4: count > 0 ? Math.round((bd[4] / totalForPercent) * 100) : 0,
+      3: count > 0 ? Math.round((bd[3] / totalForPercent) * 100) : 0,
+      2: count > 0 ? Math.round((bd[2] / totalForPercent) * 100) : 0,
+      1: count > 0 ? Math.round((bd[1] / totalForPercent) * 100) : 0
+    };
+
+    return {
+      currentRating: avg,
+      currentRatingCount: count,
+      ratingPercentages: percentages
+    };
+  }, [reviewsData.reviews, lot?.rating]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-outfit">
@@ -299,9 +327,9 @@ const LotDetailPage = () => {
             <div className="p-6 pb-4">
               <h1 className="text-2xl font-black text-gray-800 tracking-tight leading-tight mb-1">{lot.name}</h1>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-sm font-bold text-amber-500">{lot.rating?.toFixed(1) || '5.0'}</span>
-                {renderStars(lot.rating || 5.0, 14)}
-                <span className="text-xs text-gray-400 font-semibold">({lot.ratingCount || 0} reviews)</span>
+                <span className="text-sm font-bold text-amber-500">{currentRating.toFixed(1)}</span>
+                {renderStars(currentRating, 14)}
+                <span className="text-xs text-gray-400 font-semibold">({currentRatingCount} reviews)</span>
               </div>
               <p className="text-xs font-bold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-md inline-block">
                 Public parking space
@@ -418,10 +446,10 @@ const LotDetailPage = () => {
                     <div className="flex gap-6 items-center">
                       <div className="text-center shrink-0">
                         <p className="text-4xl font-black text-gray-800 leading-none mb-1">
-                          {lot.rating?.toFixed(1) || '5.0'}
+                          {currentRating.toFixed(1)}
                         </p>
-                        <div className="mb-1">{renderStars(lot.rating || 5.0, 12, "text-amber-400 fill-amber-400 justify-center")}</div>
-                        <span className="text-xs text-gray-400 font-semibold">{lot.ratingCount || 0} reviews</span>
+                        <div className="mb-1">{renderStars(currentRating, 12, "text-amber-400 fill-amber-400 justify-center")}</div>
+                        <span className="text-xs text-gray-400 font-semibold">{currentRatingCount} {currentRatingCount === 1 ? 'review' : 'reviews'}</span>
                       </div>
 
                       {/* Bar charts distribution */}
