@@ -79,10 +79,10 @@ const MonitorPage = () => {
                 <span className="w-2 h-2 rounded-full bg-red-500" />
                 {(slotsMap[lot._id] || []).filter((s) => s.status === 'occupied').length} Occupied
               </span>
-              <span className="flex items-center gap-1 text-yellow-600">
+              {/* <span className="flex items-center gap-1 text-yellow-600">
                 <span className="w-2 h-2 rounded-full bg-yellow-500" />
                 {(slotsMap[lot._id] || []).filter((s) => s.status === 'reserved').length} Reserved
-              </span>
+              </span> */}
             </div>
           </div>
 
