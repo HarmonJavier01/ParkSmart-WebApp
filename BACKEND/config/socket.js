@@ -5,7 +5,10 @@ let io;
 export const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL || 'http://localhost:5173',
+      origin: (origin, callback) => {
+        // Allow all client origins (localhost, Vercel deployments, etc.)
+        callback(null, true);
+      },
       methods: ['GET', 'POST'],
       credentials: true
     }

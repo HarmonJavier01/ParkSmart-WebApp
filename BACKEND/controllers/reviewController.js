@@ -158,6 +158,11 @@ export const createReview = async (req, res, next) => {
         lotRating: averageRating,
         lotRatingCount: ratingCount
       });
+      io.emit('lot:update', {
+        _id: String(targetLotId),
+        rating: averageRating,
+        ratingCount: ratingCount
+      });
     } catch (socketErr) {
       console.warn('Socket broadcast warning:', socketErr.message);
     }

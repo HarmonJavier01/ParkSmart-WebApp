@@ -138,6 +138,9 @@ const LotDetailPage = () => {
             ratingCount: data.lotRatingCount !== undefined ? data.lotRatingCount : updatedList.length
           };
         });
+        if (data.lotRating !== undefined) {
+          setLot(prev => prev ? { ...prev, rating: data.lotRating, ratingCount: data.lotRatingCount } : prev);
+        }
       }
     }
   });
@@ -185,6 +188,9 @@ const LotDetailPage = () => {
             ratingCount: response.lotRatingCount ?? updatedReviews.length
           };
         });
+        if (response.lotRating !== undefined) {
+          setLot(prev => prev ? { ...prev, rating: response.lotRating, ratingCount: response.lotRatingCount } : prev);
+        }
       }
 
       // Close modal & reset input fields
@@ -248,7 +254,9 @@ const LotDetailPage = () => {
   const sortedReviews = useMemo(() => {
     return [...(reviewsData.reviews || [])].sort((a, b) => {
       if (sortBy === 'newest') {
-        return new Date(b.createdAt) - new Date(a.createdAt);
+        const timeB = new Date(b.createdAt || Date.now()).getTime();
+        const timeA = new Date(a.createdAt || Date.now()).getTime();
+        return timeB - timeA;
       }
       if (sortBy === 'highest') {
         return (b.rating || 5) - (a.rating || 5);
@@ -564,15 +572,61 @@ const LotDetailPage = () => {
 
               {/* --- REVIEWS TAB --- */}
               {activeTab === 'reviews' && (
-                <div className="space-y-6">
-                  {/* Reviews actions header removed as requested */}
+                <div className="space-y-5">
+                  {/* Reviews Actions Header */}
+                  <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-black text-gray-800">
+                        Customer Reviews ({sortedReviews.length})
+                      </span>
+                      <span className="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        ★ {currentRating.toFixed(1)}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setShowReviewModal(true)}
+                      className="py-1.5 px-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm shadow-teal-600/20"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>Write a review</span>
+                    </button>
+                  </div>
+
+                  {/* Filter / Sort pills */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] text-gray-400 font-bold mr-1">Sort:</span>
+                    {[
+                      { key: 'newest', label: 'Newest' },
+                      { key: 'highest', label: 'Highest' },
+                      { key: 'lowest', label: 'Lowest' }
+                    ].map(tab => (
+                      <button
+                        key={tab.key}
+                        onClick={() => setSortBy(tab.key)}
+                        className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition ${
+                          sortBy === tab.key
+                            ? 'bg-teal-600 text-white shadow-sm'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
 
                   {/* Reviews List */}
                   {reviewsLoading ? (
                     <div className="py-8 text-center text-xs text-gray-400 font-semibold animate-pulse">Loading reviews…</div>
                   ) : sortedReviews.length === 0 ? (
-                    <div className="py-12 text-center text-sm text-gray-400">
-                      No reviews yet. Be the first to write a review!
+                    <div className="py-12 text-center text-sm text-gray-400 space-y-3">
+                      <p>No reviews yet. Be the first to share your experience!</p>
+                      <button
+                        onClick={() => setShowReviewModal(true)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white font-bold text-xs rounded-xl hover:bg-teal-700 transition"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>Write First Review</span>
+                      </button>
                     </div>
                   ) : (
                     <div className="space-y-5 divide-y divide-gray-50">
