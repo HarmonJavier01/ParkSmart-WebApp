@@ -68,7 +68,7 @@ export const getLotReviews = async (req, res, next) => {
 // Create a review in MongoDB in real time
 export const createReview = async (req, res, next) => {
   try {
-    const { lotId } = req.params;
+    const lotId = req.params.lotId || req.body.lotId || req.query.lotId;
     const { rating, feedback, guestName } = req.body;
     
     let userId = null;
