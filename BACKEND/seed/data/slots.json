@@ -30,6 +30,16 @@
   { "_id": "6648b2c3d4e5f6a7b8c9d0a6", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_07", "type": "PWD", "status": "available", "sensorId": "SENSOR_027" },
   { "_id": "6648b2c3d4e5f6a7b8c9d0a7", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_08", "type": "regular", "status": "occupied", "sensorId": "SENSOR_028" },
   { "_id": "6648b2c3d4e5f6a7b8c9d0a8", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_09", "type": "regular", "status": "available", "sensorId": "SENSOR_029" },
-  { "_id": "6648b2c3d4e5f6a7b8c9d0a9", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_10", "type": "ev", "status": "available", "sensorId": "SENSOR_030" }
+  { "_id": "6648b2c3d4e5f6a7b8c9d0a9", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_10", "type": "ev", "status": "available", "sensorId": "SENSOR_030" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b0", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_11", "type": "regular", "status": "available", "sensorId": "SENSOR_031" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b1", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_12", "type": "regular", "status": "occupied", "sensorId": "SENSOR_032" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b2", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_13", "type": "regular", "status": "available", "sensorId": "SENSOR_033" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b3", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_14", "type": "PWD", "status": "available", "sensorId": "SENSOR_034" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b4", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_15", "type": "motorcycle", "status": "available", "sensorId": "SENSOR_035" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b5", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_16", "type": "regular", "status": "available", "sensorId": "SENSOR_036" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b6", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_17", "type": "regular", "status": "available", "sensorId": "SENSOR_037" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b7", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_18", "type": "regular", "status": "occupied", "sensorId": "SENSOR_038" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b8", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_19", "type": "regular", "status": "available", "sensorId": "SENSOR_039" },
+  { "_id": "6648b2c3d4e5f6a7b8c9d0b9", "lotId": "6648a1b2c3d4e5f6a7b8c9d2", "slotNumber": "SLOT_20", "type": "ev", "status": "available", "sensorId": "SENSOR_040" }
 ]
 

@@ -24,20 +24,36 @@ export const fetchFromESP32 = async (req, res, next) => {
     const response = await axios.get(ESP32_URL, { timeout: 5000 });
     const { distance, status, led } = response.data;
 
-    // Update the slot status
-    const slot = await Slot.findOneAndUpdate(
-      { _id: slotId, lotId },
-      {
-        status: status === 'occupied' ? 'occupied' : 'available',
-        sensorId,
-        lastPingAt: new Date()
-      },
-      { new: true }
-    );
-
-    if (!slot) {
+    // Find slot to detect status transition
+    const existingSlot = await Slot.findOne({ _id: slotId, lotId });
+    if (!existingSlot) {
       return res.status(404).json({ message: 'Slot not found' });
     }
+
+    const now = new Date();
+    const targetStatus = status === 'occupied' ? 'occupied' : 'available';
+
+    existingSlot.sensorId = sensorId;
+    existingSlot.lastPingAt = now;
+
+    if (targetStatus === 'occupied') {
+      if (existingSlot.status !== 'occupied') {
+        existingSlot.status = 'occupied';
+        existingSlot.parkedAt = now;
+        existingSlot.expectedEndTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+        existingSlot.availableSince = null;
+      }
+    } else {
+      if (existingSlot.status !== 'available') {
+        existingSlot.status = 'available';
+        existingSlot.availableSince = now;
+        existingSlot.parkedAt = null;
+        existingSlot.expectedEndTime = null;
+        existingSlot.occupiedBy = null;
+      }
+    }
+
+    const slot = await existingSlot.save();
 
     // Log the sensor reading
     const isAnomaly = distance < 0 || distance > 400;
@@ -47,7 +63,7 @@ export const fetchFromESP32 = async (req, res, next) => {
       lotId,
       status,
       distanceCm: distance,
-      timestamp: new Date(),
+      timestamp: now,
       isAnomaly
     });
 
@@ -57,9 +73,17 @@ export const fetchFromESP32 = async (req, res, next) => {
       slotId: slot._id,
       status: slot.status,
       lotId: slot.lotId,
+      slotNumber: slot.slotNumber,
+      type: slot.type,
+      sensorId: slot.sensorId,
+      parkedAt: slot.parkedAt,
+      expectedEndTime: slot.expectedEndTime,
+      availableSince: slot.availableSince,
+      occupiedBy: slot.occupiedBy,
+      lastPingAt: slot.lastPingAt,
       distance,
       led,
-      timestamp: new Date().toISOString()
+      timestamp: now.toISOString()
     });
 
     res.json({

@@ -20,6 +20,8 @@ export const ENDPOINTS = {
   SLOTS: {
     BY_LOT: (lotId) => `${API_BASE}/slots/lot/${lotId}`,
     UPDATE: (id) => `${API_BASE}/slots/${id}`,
+    START_PARKING: (id) => `${API_BASE}/slots/${id}/start-parking`,
+    END_PARKING: (id) => `${API_BASE}/slots/${id}/end-parking`,
     SENSOR_UPDATE: `${API_BASE}/slots/sensor-update`
   },
   RESERVATIONS: {

@@ -24,12 +24,16 @@ const SlotMarker = ({ slot, position }) => {
     fontWeight: 'bold'
   };
 
+  const timingTitle = isAvailable
+    ? `Slot ${slot.slotNumber} (AVAILABLE) - Free for ${slot.availableSince ? new Date(slot.availableSince).toLocaleTimeString() : 'now'}`
+    : `Slot ${slot.slotNumber} (OCCUPIED) - ${slot.parkedAt ? `Started: ${new Date(slot.parkedAt).toLocaleTimeString()}` : ''} ${slot.expectedEndTime ? `Until: ${new Date(slot.expectedEndTime).toLocaleTimeString()}` : ''}`;
+
   return (
     <Marker
       position={position}
       icon={markerIcon}
       label={markerLabel}
-      title={`Slot ${slot.slotNumber} - ${slot.status}`}
+      title={timingTitle}
     />
   );
 };

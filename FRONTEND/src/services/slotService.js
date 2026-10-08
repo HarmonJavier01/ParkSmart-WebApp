@@ -12,6 +12,16 @@ const slotService = {
     return response.data;
   },
 
+  startParking: async (id, data = {}) => {
+    const response = await api.post(ENDPOINTS.SLOTS.START_PARKING(id), data);
+    return response.data;
+  },
+
+  endParking: async (id) => {
+    const response = await api.post(ENDPOINTS.SLOTS.END_PARKING(id));
+    return response.data;
+  },
+
   sensorUpdate: async (data) => {
     const response = await api.post(ENDPOINTS.SLOTS.SENSOR_UPDATE, data);
     return response.data;
@@ -19,4 +29,3 @@ const slotService = {
 };
 
 export default slotService;
-

@@ -39,7 +39,7 @@
     "address": "Milo St, Manaoag, Pangasinan (Nearby Church)",
     "lat": 16.04527,
     "lng": 120.49119,
-    "totalSlots": 10,
+    "totalSlots": 20,
     "ratePerHour": 25,
     "operatingHours": { "open": "05:00", "close": "22:00" },
     "isActive": true,

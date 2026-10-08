@@ -5,6 +5,7 @@ import {
   MessageSquare, CheckCircle, Info, ExternalLink
 } from 'lucide-react';
 import SlotGrid from '../../components/parking/SlotGrid.jsx';
+import SlotDetailModal from '../../components/parking/SlotDetailModal.jsx';
 import useSlots from '../../hooks/useSlots.js';
 import lotService from '../../services/lotService.js';
 import reviewService from '../../services/reviewService.js';
@@ -71,6 +72,9 @@ const LotDetailPage = () => {
   // Lightbox photo viewer state
   const [activePhotoIndex, setActivePhotoIndex] = useState(null);
 
+  // Real-time slot details & parking modal
+  const [selectedSlotForModal, setSelectedSlotForModal] = useState(null);
+
   // Notifications
   const [toastMessage, setToastMessage] = useState('');
 
@@ -129,8 +133,13 @@ const LotDetailPage = () => {
   });
 
   const handleSlotClick = (slot) => {
-    // TODO: Reservations must be removed. Slot click reservation navigation is commented out.
+    setSelectedSlotForModal(slot);
   };
+
+  const activeModalSlot = useMemo(() => {
+    if (!selectedSlotForModal) return null;
+    return slots.find(s => s._id === selectedSlotForModal._id || String(s._id) === String(selectedSlotForModal._id)) || selectedSlotForModal;
+  }, [selectedSlotForModal, slots]);
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
@@ -314,12 +323,10 @@ const LotDetailPage = () => {
           <SlotGrid
             slots={slots}
             onSlotClick={handleSlotClick}
-            title={`Slots (${lot.availableSlots || 0} available)`}
+            title={`Real-Time Parking Slots (${slots.filter(s => s.status === 'available').length} Available / ${slots.length || lot.totalSlots || 20} Total)`}
           />
-          <p className="text-sm text-gray-400 text-center bg-gray-50/50 py-3 rounded-xl border border-dashed border-gray-100">
-            {/* TODO: Reservations must be removed. Click instructions commented out. */}
-            {/* Click on a green (available) slot to reserve it. */}
-            Green slots are currently available. Red slots are occupied.
+          <p className="text-xs text-gray-500 text-center bg-teal-50/50 py-3 px-4 rounded-xl border border-dashed border-teal-200">
+            🟢 Green slots are available (shows how long free). 🔴 Red slots are occupied (shows active parking duration). Click any slot to view time start & end time or start parking!
           </p>
 
           {/* Interactive Google Map below the Slot Grid */}
@@ -768,6 +775,17 @@ const LotDetailPage = () => {
           </div>
         </div>
       )}
+
+      {/* Real-Time Parking Slot Timing & Action Modal */}
+      <SlotDetailModal
+        slot={activeModalSlot}
+        isOpen={!!activeModalSlot}
+        onClose={() => setSelectedSlotForModal(null)}
+        onUpdated={(updatedSlot) => {
+          setSelectedSlotForModal(updatedSlot);
+          showToast('Real-time parking status updated!');
+        }}
+      />
 
     </div>
   );

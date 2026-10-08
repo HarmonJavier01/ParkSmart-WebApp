@@ -29,6 +29,23 @@ const slotSchema = new mongoose.Schema({
   lastPingAt: {
     type: Date,
     default: null
+  },
+  parkedAt: {
+    type: Date,
+    default: null
+  },
+  expectedEndTime: {
+    type: Date,
+    default: null
+  },
+  availableSince: {
+    type: Date,
+    default: Date.now
+  },
+  occupiedBy: {
+    type: String,
+    trim: true,
+    default: null
   }
 }, {
   timestamps: true

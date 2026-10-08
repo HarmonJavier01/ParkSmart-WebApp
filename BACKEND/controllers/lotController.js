@@ -10,9 +10,13 @@ export const getLots = async (req, res, next) => {
           lotId: lot._id,
           status: 'available'
         });
+        const totalCount = await Slot.countDocuments({
+          lotId: lot._id
+        });
         const slotTypes = await Slot.distinct('type', { lotId: lot._id });
         return {
           ...lot.toObject(),
+          totalSlots: totalCount || lot.totalSlots,
           availableSlots: availableCount,
           slotTypes: slotTypes
         };
@@ -35,8 +39,15 @@ export const getLotById = async (req, res, next) => {
       lotId: lot._id,
       status: 'available'
     });
+    const totalCount = await Slot.countDocuments({
+      lotId: lot._id
+    });
 
-    res.json({ ...lot.toObject(), availableSlots: availableCount });
+    res.json({
+      ...lot.toObject(),
+      totalSlots: totalCount || lot.totalSlots,
+      availableSlots: availableCount
+    });
   } catch (error) {
     next(error);
   }

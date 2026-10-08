@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import lotService from '../../services/lotService.js';
 import slotService from '../../services/slotService.js';
 import SlotGrid from '../../components/parking/SlotGrid.jsx';
+import SlotDetailModal from '../../components/parking/SlotDetailModal.jsx';
 import ParkingMap from '../../components/parking/ParkingMap.jsx';
 import { useSocketEvent } from '../../hooks/useSocket.js';
 import LoadingSpinner from '../../components/common/LoadingSpinner.jsx';
@@ -10,6 +11,7 @@ const MonitorPage = () => {
   const [lots, setLots] = useState([]);
   const [slotsMap, setSlotsMap] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +41,17 @@ const MonitorPage = () => {
       return {
         ...prev,
         [updatedSlot.lotId]: lotSlots.map((s) =>
-          s._id === updatedSlot.slotId ? { ...s, status: updatedSlot.status } : s
+          (s._id === updatedSlot.slotId || String(s._id) === String(updatedSlot.slotId))
+            ? { 
+                ...s, 
+                status: updatedSlot.status ?? s.status,
+                parkedAt: updatedSlot.parkedAt !== undefined ? updatedSlot.parkedAt : s.parkedAt,
+                expectedEndTime: updatedSlot.expectedEndTime !== undefined ? updatedSlot.expectedEndTime : s.expectedEndTime,
+                availableSince: updatedSlot.availableSince !== undefined ? updatedSlot.availableSince : s.availableSince,
+                occupiedBy: updatedSlot.occupiedBy !== undefined ? updatedSlot.occupiedBy : s.occupiedBy,
+                lastPingAt: updatedSlot.lastPingAt || s.lastPingAt
+              } 
+            : s
         )
       };
     });
@@ -75,7 +87,10 @@ const MonitorPage = () => {
           </div>
 
           {/* Slot Grid Status */}
-          <SlotGrid slots={slotsMap[lot._id] || []} />
+          <SlotGrid 
+            slots={slotsMap[lot._id] || []} 
+            onSlotClick={(s) => setSelectedSlot(s)}
+          />
 
           {/* Live Geospatial Parking Map */}
           <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm mt-6">
@@ -96,6 +111,16 @@ const MonitorPage = () => {
           </div>
         </div>
       ))}
+
+      {/* Real-time Slot Detail & Action Modal for Admin Monitor */}
+      <SlotDetailModal
+        slot={selectedSlot}
+        isOpen={!!selectedSlot}
+        onClose={() => setSelectedSlot(null)}
+        onUpdated={(updated) => {
+          setSelectedSlot(updated);
+        }}
+      />
     </div>
   );
 };

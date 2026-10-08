@@ -27,9 +27,19 @@ export const useSlots = (lotId) => {
 
   useSocketEvent('slot:update', (updatedSlot) => {
     setSlots((prev) =>
-      prev.map((slot) =>
-        slot._id === updatedSlot.slotId ? { ...slot, status: updatedSlot.status } : slot
-      )
+      prev.map((slot) => {
+        const matches = slot._id === updatedSlot.slotId || String(slot._id) === String(updatedSlot.slotId);
+        if (!matches) return slot;
+        return {
+          ...slot,
+          status: updatedSlot.status ?? slot.status,
+          parkedAt: updatedSlot.parkedAt !== undefined ? updatedSlot.parkedAt : slot.parkedAt,
+          expectedEndTime: updatedSlot.expectedEndTime !== undefined ? updatedSlot.expectedEndTime : slot.expectedEndTime,
+          availableSince: updatedSlot.availableSince !== undefined ? updatedSlot.availableSince : slot.availableSince,
+          occupiedBy: updatedSlot.occupiedBy !== undefined ? updatedSlot.occupiedBy : slot.occupiedBy,
+          lastPingAt: updatedSlot.lastPingAt || slot.lastPingAt
+        };
+      })
     );
   });
 
