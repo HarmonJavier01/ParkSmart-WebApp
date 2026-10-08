@@ -9,7 +9,12 @@ const reviewSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: [true, 'User ID is required']
+    default: null
+  },
+  reviewerName: {
+    type: String,
+    trim: true,
+    default: null
   },
   rating: {
     type: Number,
@@ -26,8 +31,8 @@ const reviewSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Ensure a user can only review a lot once to prevent spam
-reviewSchema.index({ lotId: 1, userId: 1 }, { unique: true });
+// Index for fast sorting and querying by lot
+reviewSchema.index({ lotId: 1, createdAt: -1 });
 
 const Review = mongoose.model('Review', reviewSchema);
 export default Review;

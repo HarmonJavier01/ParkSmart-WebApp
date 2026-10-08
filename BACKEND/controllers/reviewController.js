@@ -23,11 +23,25 @@ export const getLotReviews = async (req, res, next) => {
       .populate('userId', 'name email')
       .sort({ createdAt: -1 });
 
+    // Format reviews ensuring userId name is available
+    const formattedReviews = reviews.map(r => {
+      const obj = r.toObject();
+      if (!obj.userId) {
+        obj.userId = {
+          name: r.reviewerName || 'Guest Visitor',
+          email: ''
+        };
+      } else if (r.reviewerName && !obj.userId.name) {
+        obj.userId.name = r.reviewerName;
+      }
+      return obj;
+    });
+
     // Calculate rating breakdown
     const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     let sum = 0;
     
-    reviews.forEach(review => {
+    formattedReviews.forEach(review => {
       const star = Math.min(5, Math.max(1, Math.round(review.rating || 5)));
       sum += review.rating || 5;
       if (breakdown[star] !== undefined) {
@@ -35,13 +49,13 @@ export const getLotReviews = async (req, res, next) => {
       }
     });
 
-    const ratingCount = reviews.length;
+    const ratingCount = formattedReviews.length;
     const averageRating = ratingCount > 0 
       ? Math.round((sum / ratingCount) * 10) / 10 
       : 5.0;
 
     res.json({
-      reviews,
+      reviews: formattedReviews,
       rating: averageRating,
       ratingCount,
       breakdown
@@ -51,13 +65,14 @@ export const getLotReviews = async (req, res, next) => {
   }
 };
 
-// Create or update a review
+// Create a review in MongoDB in real time
 export const createReview = async (req, res, next) => {
   try {
     const { lotId } = req.params;
     const { rating, feedback, guestName } = req.body;
     
     let userId = null;
+    let reviewerName = (guestName && guestName.trim()) || 'Guest Visitor';
 
     // Check if token is passed for authenticated users
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -65,6 +80,10 @@ export const createReview = async (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         userId = decoded.id;
+        const authUser = await User.findById(userId);
+        if (authUser && authUser.name) {
+          reviewerName = authUser.name;
+        }
       } catch (err) {
         console.warn('Optional token verification failed:', err.message);
       }
@@ -90,61 +109,52 @@ export const createReview = async (req, res, next) => {
 
     const targetLotId = lot._id;
 
-    // If no authenticated user, use/create a guest user account
+    // If no authenticated user, create a unique guest user account
     if (!userId) {
-      const name = (guestName && guestName.trim()) || 'Guest Visitor';
-      let guestUser = await User.findOne({ name, role: 'user' });
-      if (!guestUser) {
-        guestUser = await User.create({
-          name,
-          email: `guest_${Date.now()}_${Math.floor(Math.random() * 100000)}@parksmart.ph`,
-          password: 'GuestPassword123!',
-          role: 'user',
-          isVerified: true
-        });
-      }
+      const guestUser = await User.create({
+        name: reviewerName,
+        email: `guest_${Date.now()}_${Math.floor(Math.random() * 100000)}@parksmart.ph`,
+        password: 'GuestPassword123!',
+        role: 'user',
+        isVerified: true
+      });
       userId = guestUser._id;
     }
 
-    // Check if user already reviewed this lot
-    let review = await Review.findOne({ lotId: targetLotId, userId });
+    // Create a new review directly in MongoDB
+    const review = await Review.create({
+      lotId: targetLotId,
+      userId,
+      reviewerName,
+      rating: parsedRating,
+      feedback: feedback ? feedback.trim() : ''
+    });
 
-    if (review) {
-      // Update existing review
-      review.rating = parsedRating;
-      review.feedback = feedback || '';
-      await review.save();
-    } else {
-      // Create new review
-      review = await Review.create({
-        lotId: targetLotId,
-        userId,
-        rating: parsedRating,
-        feedback: feedback || ''
-      });
-    }
-
-    // Recalculate average rating and ratingCount for the lot
+    // Recalculate average rating and ratingCount for the lot in MongoDB
     const reviews = await Review.find({ lotId: targetLotId });
     const ratingCount = reviews.length;
     const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
     const averageRating = ratingCount > 0 ? Math.round((sum / ratingCount) * 10) / 10 : 5.0;
 
-    // Update ParkingLot document
+    // Update ParkingLot document in MongoDB
     await ParkingLot.findByIdAndUpdate(targetLotId, {
       rating: averageRating,
       ratingCount: ratingCount
     });
 
     // Populate user info to return
-    const populatedReview = await review.populate('userId', 'name email');
+    let populatedReview = await Review.findById(review._id).populate('userId', 'name email');
+    const populatedObj = populatedReview ? populatedReview.toObject() : review.toObject();
+    if (!populatedObj.userId) {
+      populatedObj.userId = { name: reviewerName, email: '' };
+    }
 
     // Emit live WebSocket event so all connected devices update their reviews & stars automatically
     try {
       const io = getIO();
       io.emit('review:new', {
-        lotId: targetLotId,
-        review: populatedReview,
+        lotId: String(targetLotId),
+        review: populatedObj,
         lotRating: averageRating,
         lotRatingCount: ratingCount
       });
@@ -152,9 +162,9 @@ export const createReview = async (req, res, next) => {
       console.warn('Socket broadcast warning:', socketErr.message);
     }
 
-    res.status(200).json({
-      message: 'Review saved successfully',
-      review: populatedReview,
+    res.status(201).json({
+      message: 'Review saved successfully in MongoDB',
+      review: populatedObj,
       lotRating: averageRating,
       lotRatingCount: ratingCount
     });

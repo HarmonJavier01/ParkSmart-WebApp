@@ -85,10 +85,12 @@ const LotDetailPage = () => {
     setTimeout(() => setToastMessage(''), 3000);
   };
 
-  const fetchReviews = async () => {
+  const fetchReviews = async (overrideLotId) => {
     try {
       setReviewsLoading(true);
-      const data = await reviewService.getReviewsByLot(lotId);
+      const target = overrideLotId || lot?._id || lotId;
+      if (!target) return;
+      const data = await reviewService.getReviewsByLot(target);
       if (data && Array.isArray(data.reviews)) {
         setReviewsData(data);
       }
@@ -100,35 +102,43 @@ const LotDetailPage = () => {
   };
 
   useEffect(() => {
-    const fetchLot = async () => {
+    const fetchLotAndReviews = async () => {
       try {
+        setLoading(true);
         const data = await lotService.getLotById(lotId);
         setLot(data);
+        const target = data?._id || lotId;
+        if (target) {
+          fetchReviews(target);
+        }
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-    fetchLot();
-    fetchReviews();
+    fetchLotAndReviews();
   }, [lotId]);
 
   useSocketEvent('review:new', (data) => {
-    if (data?.lotId === lotId || String(data?.lotId) === String(lot?._id)) {
-      setReviewsData(prev => {
-        const existing = prev?.reviews || [];
-        const exists = existing.some(r => r._id === data.review?._id);
-        const updatedList = exists
-          ? existing.map(r => r._id === data.review?._id ? data.review : r)
-          : [data.review, ...existing];
-        return {
-          ...prev,
-          reviews: updatedList,
-          rating: data.lotRating || prev.rating,
-          ratingCount: data.lotRatingCount || prev.ratingCount
-        };
-      });
+    const currentLot = String(lot?._id || lotId || '');
+    const incomingLot = String(data?.lotId || '');
+    if (!incomingLot || incomingLot === currentLot || incomingLot === String(lot?._id)) {
+      if (data?.review) {
+        setReviewsData(prev => {
+          const existing = prev?.reviews || [];
+          const exists = existing.some(r => r._id === data.review._id);
+          const updatedList = exists
+            ? existing.map(r => r._id === data.review._id ? data.review : r)
+            : [data.review, ...existing];
+          return {
+            ...prev,
+            reviews: updatedList,
+            rating: data.lotRating !== undefined ? data.lotRating : prev.rating,
+            ratingCount: data.lotRatingCount !== undefined ? data.lotRatingCount : updatedList.length
+          };
+        });
+      }
     }
   });
 
@@ -147,58 +157,47 @@ const LotDetailPage = () => {
     try {
       setIsSubmittingReview(true);
       const targetId = lot?._id || lotId;
+      const reviewerDisplayName = !isAuthenticated 
+        ? (guestName?.trim() || 'Guest Visitor') 
+        : (user?.name || guestName?.trim() || 'Guest Visitor');
+
       const reviewPayload = {
         rating: Number(newRating),
-        feedback: newFeedback,
-        guestName: !isAuthenticated ? (guestName || 'Guest Visitor') : (user?.name || guestName || 'Guest Visitor')
+        feedback: newFeedback ? newFeedback.trim() : '',
+        guestName: reviewerDisplayName
       };
 
-      let response = null;
-      try {
-        response = await reviewService.createReview(targetId, reviewPayload);
-      } catch (apiErr) {
-        console.warn('Backend review API unreachable or 404, using resilient state fallback:', apiErr.message);
+      const response = await reviewService.createReview(targetId, reviewPayload);
+      
+      showToast(response?.message || 'Review saved to MongoDB successfully!');
+      
+      if (response?.review) {
+        setReviewsData(prev => {
+          const existingReviews = prev?.reviews || [];
+          const exists = existingReviews.some(r => r._id === response.review._id);
+          const updatedReviews = exists
+            ? existingReviews.map(r => r._id === response.review._id ? response.review : r)
+            : [response.review, ...existingReviews];
+          return {
+            ...prev,
+            reviews: updatedReviews,
+            rating: response.lotRating ?? prev.rating,
+            ratingCount: response.lotRatingCount ?? updatedReviews.length
+          };
+        });
       }
 
-      showToast(response?.message || 'Review submitted successfully!');
-      
-      const newReviewItem = response?.review || {
-        _id: 'review_' + Date.now(),
-        rating: Number(newRating),
-        feedback: newFeedback,
-        createdAt: new Date().toISOString(),
-        userId: {
-          name: reviewPayload.guestName,
-          email: ''
-        }
-      };
-
-      setReviewsData(prev => {
-        const existingReviews = prev?.reviews || [];
-        const updatedReviews = [newReviewItem, ...existingReviews.filter(r => r.userId?.name !== reviewPayload.guestName && r._id !== newReviewItem._id)];
-        const total = updatedReviews.length;
-        const sum = updatedReviews.reduce((acc, r) => acc + (r.rating || 5), 0);
-        const avg = total > 0 ? Math.round((sum / total) * 10) / 10 : 5.0;
-        return {
-          ...prev,
-          reviews: updatedReviews,
-          rating: avg,
-          ratingCount: total
-        };
-      });
-
-      // Close modal
+      // Close modal & reset input fields
       setShowReviewModal(false);
       setNewRating(5);
       setNewFeedback('');
       setGuestName('');
 
-      // Refresh reviews from MongoDB database
-      fetchReviews();
+      // Refresh reviews directly from MongoDB
+      fetchReviews(targetId);
     } catch (err) {
-      console.warn('Review submit caught:', err);
-      showToast('Review submitted successfully!');
-      setShowReviewModal(false);
+      console.error('Review submit error:', err);
+      showToast(err.response?.data?.message || 'Failed to submit review. Please try again.');
     } finally {
       setIsSubmittingReview(false);
     }
@@ -525,21 +524,33 @@ const LotDetailPage = () => {
                   </div>
 
                   {/* Overview Preview Reviews */}
-                  {reviewsData.reviews.length > 0 && (
+                  {sortedReviews.length > 0 && (
                     <div className="space-y-3 pt-2">
-                      <h3 className="text-sm font-black text-gray-800 tracking-tight">Recent Feedback</h3>
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-sm font-black text-gray-800 tracking-tight">Recent Feedback</h3>
+                        <button
+                          onClick={() => setActiveTab('reviews')}
+                          className="text-xs text-teal-600 font-bold hover:underline"
+                        >
+                          View all ({sortedReviews.length})
+                        </button>
+                      </div>
                       <div className="space-y-3">
-                        {reviewsData.reviews.slice(0, 2).map((rev) => (
-                          <div key={rev._id} className="p-3 bg-gray-50 border border-gray-100 rounded-xl space-y-1.5">
+                        {sortedReviews.slice(0, 3).map((rev) => (
+                          <div key={rev._id} className="p-3.5 bg-gray-50 border border-gray-100 rounded-2xl space-y-2">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs font-bold text-gray-700">{rev.userId?.name || 'Anonymous User'}</span>
-                              <span className="text-[10px] text-gray-400">{formatRelativeTime(rev.createdAt)}</span>
+                              <span className="text-xs font-bold text-gray-800">
+                                {rev.reviewerName || rev.userId?.name || 'Guest Visitor'}
+                              </span>
+                              <span className="text-[10px] text-gray-400 font-medium">
+                                {formatRelativeTime(rev.createdAt)}
+                              </span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              {renderStars(rev.rating, 10)}
+                              {renderStars(rev.rating, 12)}
                             </div>
                             {rev.feedback && (
-                              <p className="text-xs text-gray-500 italic font-medium leading-relaxed">
+                              <p className="text-xs text-gray-600 italic font-medium leading-relaxed">
                                 "{rev.feedback}"
                               </p>
                             )}
@@ -566,7 +577,8 @@ const LotDetailPage = () => {
                   ) : (
                     <div className="space-y-5 divide-y divide-gray-50">
                       {sortedReviews.map((rev, index) => {
-                        const userInitial = rev.userId?.name ? rev.userId.name.charAt(0).toUpperCase() : 'U';
+                        const displayName = rev.reviewerName || rev.userId?.name || 'Guest Visitor';
+                        const userInitial = displayName.charAt(0).toUpperCase();
                         // Dynamic color list for avatars
                         const colors = ['bg-teal-500', 'bg-blue-500', 'bg-purple-500', 'bg-indigo-500', 'bg-emerald-500'];
                         const colorClass = colors[index % colors.length];
@@ -580,7 +592,7 @@ const LotDetailPage = () => {
                               </div>
                               <div>
                                 <h4 className="text-xs font-black text-gray-800 tracking-tight leading-none mb-0.5">
-                                  {rev.userId?.name || 'Anonymous User'}
+                                  {displayName}
                                 </h4>
                                 <div className="flex items-center gap-1.5">
                                   {renderStars(rev.rating, 10)}

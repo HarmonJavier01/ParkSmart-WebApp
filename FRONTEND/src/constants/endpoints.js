@@ -48,8 +48,8 @@ export const ENDPOINTS = {
     HISTORY: `${API_BASE}/esp32/history`
   },
   REVIEWS: {
-    BY_LOT: (lotId) => `${API_BASE}/reviews/${lotId}`,
-    CREATE: (lotId) => `${API_BASE}/reviews/${lotId}`
+    BY_LOT: (lotId) => (lotId && lotId !== 'undefined') ? `${API_BASE}/reviews/${lotId}` : `${API_BASE}/reviews`,
+    CREATE: (lotId) => (lotId && lotId !== 'undefined') ? `${API_BASE}/reviews/${lotId}` : `${API_BASE}/reviews`
   }
 };
 
