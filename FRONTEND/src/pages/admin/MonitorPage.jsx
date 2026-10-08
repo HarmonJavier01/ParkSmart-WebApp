@@ -112,14 +112,11 @@ const MonitorPage = () => {
         </div>
       ))}
 
-      {/* Real-time Slot Detail & Action Modal for Admin Monitor */}
+      {/* Real-time Slot Detail & Sensor Telemetry Modal for Admin Monitor */}
       <SlotDetailModal
         slot={selectedSlot}
         isOpen={!!selectedSlot}
         onClose={() => setSelectedSlot(null)}
-        onUpdated={(updated) => {
-          setSelectedSlot(updated);
-        }}
       />
     </div>
   );

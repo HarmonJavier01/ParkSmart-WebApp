@@ -906,15 +906,11 @@ const LotDetailPage = () => {
         </div>
       )}
 
-      {/* Real-Time Parking Slot Timing & Action Modal */}
+      {/* Real-Time Parking Slot Sensor Telemetry Modal */}
       <SlotDetailModal
         slot={activeModalSlot}
         isOpen={!!activeModalSlot}
         onClose={() => setSelectedSlotForModal(null)}
-        onUpdated={(updatedSlot) => {
-          setSelectedSlotForModal(updatedSlot);
-          showToast('Real-time parking status updated!');
-        }}
       />
 
     </div>

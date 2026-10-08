@@ -74,13 +74,7 @@ const SlotCell = ({ slot, onClick, showTooltip = true }) => {
             <div className="space-y-0.5 text-[11px] text-gray-300">
               <p>⏱️ <span className="text-gray-400">Parked for:</span> <span className="font-bold text-amber-300">{formatElapsed(slot.parkedAt)}</span></p>
               {slot.parkedAt && (
-                <p>🟢 <span className="text-gray-400">Started:</span> <span className="font-bold">{formatClockTime(slot.parkedAt)}</span></p>
-              )}
-              {slot.expectedEndTime && (
-                <p>🏁 <span className="text-gray-400">End Time:</span> <span className="font-bold">{formatClockTime(slot.expectedEndTime)}</span> <span className="text-gray-400 text-[10px]">({formatRemaining(slot.expectedEndTime)})</span></p>
-              )}
-              {slot.occupiedBy && (
-                <p className="text-gray-400 truncate max-w-[180px]">🚗 {slot.occupiedBy}</p>
+                <p>🔴 <span className="text-gray-400">Detected:</span> <span className="font-bold">{formatClockTime(slot.parkedAt)}</span></p>
               )}
             </div>
           )}
@@ -89,7 +83,7 @@ const SlotCell = ({ slot, onClick, showTooltip = true }) => {
           {isAvailable && (
             <div className="space-y-0.5 text-[11px] text-gray-300">
               <p>🟢 <span className="text-gray-400">Free for:</span> <span className="font-bold text-emerald-400">{formatElapsed(slot.availableSince)}</span></p>
-              <p className="text-[10px] text-gray-400">Ready for parking now</p>
+              <p className="text-[10px] text-emerald-400 font-medium">Slot Vacant (Sensor Clear)</p>
             </div>
           )}
 
@@ -97,7 +91,7 @@ const SlotCell = ({ slot, onClick, showTooltip = true }) => {
             <p className="text-[10px] text-gray-500 mt-1 pt-1 border-t border-gray-800">Sensor: {slot.sensorId}</p>
           )}
 
-          <p className="text-[10px] text-teal-400 font-semibold mt-1">👉 Click to view / park</p>
+          <p className="text-[10px] text-teal-400 font-semibold mt-1">📡 Sensor Monitored (Click for details)</p>
         </div>
       )}
     </div>
