@@ -202,6 +202,13 @@ IOT_IP_WHITELIST=192.168.1.100,192.168.1.101
 
 ---
 
+## 👨‍💻 Developer
+
+- **Harmon Javier** ([@HarmonJavier01](https://github.com/HarmonJavier01))
+
+---
+
 ## 📄 License
 
 MIT
+
