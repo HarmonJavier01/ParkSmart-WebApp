@@ -26,7 +26,9 @@ app.use(cors({
       process.env.CLIENT_URL,
       'http://localhost:5173',
       'http://localhost:5174',
-      'http://localhost:5175'
+      'http://localhost:5175',
+      'https://parksmartiot.com',
+      'https://www.parksmartiot.com'
     ].filter(Boolean);
 
     // Allow Vercel deployments (*.vercel.app), localhost, or any configured origin
